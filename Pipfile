@@ -1,0 +1,14 @@
+[[source]]
+name = "pypi"
+verify_ssl = true
+url = "https://pypi.org/simple"
+
+[requires]
+python_version = "3.5"
+
+[packages]
+scrapy = "*"
+scrapy-splash = "*"
+"beautifulsoup4" = "*"
+
+[dev-packages]
