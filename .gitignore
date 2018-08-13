@@ -103,4 +103,6 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-crawler/normas\.json
+# Test outputs from the crawler
+crawler/*.json
+crawler/*.jl
