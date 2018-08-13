@@ -10,6 +10,9 @@ class BONacional(scrapy.Spider):
         yield SplashRequest(url=url, callback=self.parse)
 
     def parse(self, response):
+    	print('========== PARSING =========')
+    	print(response.text)
+    	print('========== END PARSING =========')
     	norms = response.css('div#PorCadaNorma')
     	norm_items = norms.css('div.itemsection')
     	norm_urls = norm_items.css('h3 > a::attr(href)').extract()
