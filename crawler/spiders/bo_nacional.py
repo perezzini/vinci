@@ -20,7 +20,7 @@ class BONacional(scrapy.Spider):
 
     def parse_details(self, response):
     	full_text = response.css('div#print').extract_first()
-    	soup = BeautifulSoup(full_text)
+    	soup = BeautifulSoup(full_text, 'html.parser')
     	yield {
     		'structured': {
     			'titulo': response.css('p.aviso-titulo::text').extract_first(),
