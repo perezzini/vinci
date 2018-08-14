@@ -10,5 +10,7 @@ python_version = "3.5"
 scrapy = "*"
 scrapy-splash = "*"
 "beautifulsoup4" = "*"
+python-dotenv = "*"
+pymongo = "*"
 
 [dev-packages]
