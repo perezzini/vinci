@@ -104,5 +104,4 @@ venv.bak/
 .mypy_cache/
 
 # Test outputs from the crawler
-crawler/*.json
-crawler/*.jl
+crawler/outputs/
