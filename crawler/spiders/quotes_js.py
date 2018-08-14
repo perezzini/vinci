@@ -1,5 +1,6 @@
 import scrapy
 from scrapy_splash import SplashRequest
+from database import DB
 
 
 class QuotesSpider(scrapy.Spider):
