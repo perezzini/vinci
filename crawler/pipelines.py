@@ -46,6 +46,8 @@ class BONacionalPipeline(object):
 		self.mongo_client.insert_one(self.collection_name, document)
 		self.mongo_client.close()
 
+		self.items = list()
+
 	def process_item(self, item, spider):
 		self.items.append(item)
 		return item
