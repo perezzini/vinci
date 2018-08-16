@@ -8,7 +8,18 @@
 import scrapy
 
 
-class CrawlerItem(scrapy.Item):
+class Quote(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
-    pass
+    text = scrapy.Field()
+    author = scrapy.Field()
+    tags = scrapy.Field()
+
+class Author(scrapy.Item):
+	description = scrapy.Field()
+
+class Norma(scrapy.Item):
+	title = scrapy.Field()
+	abstract = scrapy.Field()
+	date = scrapy.Field()
+	full_text = scrapy.Field()
