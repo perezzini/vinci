@@ -3,7 +3,7 @@ from scrapy_splash import SplashRequest
 from bs4 import BeautifulSoup
 from crawler.items import Author
 
-class Quotes(scrapy.Spider):
+class Authors(scrapy.Spider):
     name = 'authors'
 
     def start_requests(self):
