@@ -1,9 +1,10 @@
 import scrapy
 from scrapy_splash import SplashRequest
 from bs4 import BeautifulSoup
+from crawler.items import Author
 
 class Quotes(scrapy.Spider):
-    name = "quotes"
+    name = 'authors'
 
     def start_requests(self):
         url = 'http://quotes.toscrape.com/'
@@ -17,7 +18,7 @@ class Quotes(scrapy.Spider):
 
     def parse_details(self, response):
         container = response.css('div.author-details').extract_first()
-        soup = BeautifulSoup(container)
-        yield {
-            'complete': soup.get_text()
-        }
+        soup = BeautifulSoup(container, 'html.parser')
+        yield Author({
+            'description': soup.get_text()
+        })
