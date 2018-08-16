@@ -105,3 +105,7 @@ venv.bak/
 
 # Test outputs from the crawler
 crawler/outputs/
+
+# scrapyd-client generated files
+dbs/
+twistd.pid
