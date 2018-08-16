@@ -12,5 +12,7 @@ scrapy-splash = "*"
 "beautifulsoup4" = "*"
 python-dotenv = "*"
 pymongo = "*"
+scrapyd = "*"
+scrapyd-client = "*"
 
 [dev-packages]
