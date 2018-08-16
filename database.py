@@ -3,9 +3,9 @@ import settings
 
 class DB():
 	def __init__(self):
-		self.client = pymongo.MongoClient(settings.DB_SERVER, int(settings.DB_PORT))
+		self.client = pymongo.MongoClient(settings.DB_SERVER, int(settings.DB_PORT))  # Connect to client
 
-	def close_conn(self):
+	def close(self):
 		self.client.close()
 
 	def import_db(self, db):
@@ -61,4 +61,7 @@ class DB():
 
 	def count_documents(self, coll, filter):
 		coll = self.db[coll]
-		return coll.count_documents(filter)  # filter can be an empty document to count all documents
+		return coll.count_documents(filter)  # 'filter' can be an empty document to count all documents
+
+	def get_timestamp(self, document):
+		return str(document['_id'].generation_time)
