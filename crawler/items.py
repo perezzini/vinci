@@ -19,7 +19,9 @@ class Author(scrapy.Item):
 	description = scrapy.Field()
 
 class Norma(scrapy.Item):
+	full_text = scrapy.Field()
+
+class NormaNacional(Norma):
 	title = scrapy.Field()
 	abstract = scrapy.Field()
 	date = scrapy.Field()
-	full_text = scrapy.Field()
