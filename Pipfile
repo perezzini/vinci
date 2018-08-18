@@ -14,5 +14,6 @@ python-dotenv = "*"
 pymongo = "*"
 scrapyd = "*"
 scrapyd-client = "*"
+unidecode = "*"
 
 [dev-packages]
