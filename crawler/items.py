@@ -7,7 +7,6 @@
 
 import scrapy
 
-
 class Quote(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
@@ -20,6 +19,40 @@ class Author(scrapy.Item):
 
 class Norma(scrapy.Item):
 	full_text = scrapy.Field()
+	type = scrapy.Field()
+
+	def get_type_of_norm(txt):
+			txt = txt.lower()
+			txt = utils.to_ascii(txt)
+			
+			if 'decreto' in txt:
+				return 'd'
+			elif 'aviso' in txt:
+				return 'a'
+			elif 'convocatoria' in txt:
+				return 'c'
+			elif 'contrato' in txt:
+				return 'cont'
+			elif 'remate' in txt:
+				return 'rem'
+			elif 'edictos' in txt:
+				return 'e'
+			elif 'resolucion' in txt:
+				return 'r'
+			elif 'resolucion general' in txt:
+				return 'rg'
+			elif 'resolucion sintetizada' in txt:
+				return 'rs'
+			elif 'disposicion' in txt:
+				return 'disp'
+			elif 'ley' in txt:
+				return 'l'
+			elif 'decision administrativa' in txt:
+				return 'da'
+			elif 'ordenanza' in txt:
+				return 'o'
+			else:
+				return 'None'
 
 class NormaNacional(Norma):
 	title = scrapy.Field()
