@@ -29,25 +29,39 @@ class AuthorPipeline(object):
 		self.items.append(item)
 		return item
 
-class BONacionalPipeline(object):
-	collection_name = 'bo_nacional'
-
+class BOPipeline(object):
 	def __init__(self):
 		self.mongo_client = DB()
 		self.db = self.mongo_client.import_db('test')
 
 		self.items = list()
 
+	def process_item(self, item, spider):
+		self.items.append(item)
+		return item
+
+class BONacionalPipeline(BOPipeline):
+	collection_name = 'bo_nacional'
+
 	def close_spider(self, spider):
 		document = {
 			'date': str(date.today()),
-			'norms': list(map(lambda n: dict(n), self.items))
+			'norms': list(map(lambda n: dict(n), self.items)),
 		}
 		self.mongo_client.insert_one(self.collection_name, document)
 		self.mongo_client.close()
 
 		self.items = list()
 
-	def process_item(self, item, spider):
-		self.items.append(item)
-		return item
+class BOSantaFePipeline(BOPipeline):
+	collection_name = 'bo_santa_fe'
+
+	def close_spider(self, spider):
+		document = {
+			'date': str(date.today()),
+			'norms': list(map(lambda n: dict(n), self.items)),
+		}
+		self.mongo_client.insert_one(self.collection_name, document)
+		self.mongo_client.close()
+
+		self.items = list()
