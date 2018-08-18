@@ -67,6 +67,7 @@ DOWNLOAD_DELAY = 5
 ITEM_PIPELINES = {
     'crawler.pipelines.AuthorPipeline': 300,
     'crawler.pipelines.BONacionalPipeline': 300,
+    'crawler.pipelines.BOSantaFePipeline': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
