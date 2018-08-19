@@ -23,8 +23,7 @@ class Norma(scrapy.Item):
 
 	def get_type_of_norm(txt):
 			txt = txt.lower()
-			txt = utils.to_ascii(txt)
-			
+
 			if 'decreto' in txt:
 				return 'd'
 			elif 'aviso' in txt:
