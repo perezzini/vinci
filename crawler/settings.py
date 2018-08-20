@@ -102,4 +102,4 @@ SPIDER_MIDDLEWARES = {
 DUPEFILTER_CLASS = 'scrapy_splash.SplashAwareDupeFilter'
 
 # Set crawler's logging
-LOG_FILE = '.log'
+#LOG_FILE = '.log'
