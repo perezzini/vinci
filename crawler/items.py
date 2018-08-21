@@ -50,3 +50,9 @@ class NormaNacional(Norma):
 	title = scrapy.Field()
 	abstract = scrapy.Field()
 	date = scrapy.Field()
+	full_type = scrapy.Field()
+	published_date = scrapy.Field()
+	anexos = scrapy.Field()
+
+class NormaSantaFe(Norma):
+	pass
