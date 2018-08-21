@@ -1,7 +1,7 @@
 import scrapy
 from scrapy_splash import SplashRequest
 from bs4 import BeautifulSoup
-from crawler.items import NormaNacional
+from crawler.items import Norma
 
 class BONacional(scrapy.Spider):
 	name = 'bo_nacional'
@@ -35,7 +35,7 @@ class BONacional(scrapy.Spider):
 		norm_items = norms.css('div.itemsection')
 		norm_urls = norm_items.css('h3 > a::attr(href)').extract()
 
-		norm = NormaNacional()
+		norm = Norma()
 		for url in list(norm_urls):
 			url = response.urljoin(url)
 			yield SplashRequest(url=url,
@@ -59,7 +59,7 @@ class BONacional(scrapy.Spider):
 		soup = BeautifulSoup(full_text, 'html.parser')
 
 		if extract_with_css('p.aviso-norma::text'):
-			type = NormaNacional.get_type_of_norm(extract_with_css('p.aviso-norma::text'))
+			type = Norma.get_type_of_norm(extract_with_css('p.aviso-norma::text'))
 		else:
 			type = None
 
@@ -72,9 +72,8 @@ class BONacional(scrapy.Spider):
 		norm['abstract'] = extract_with_css('p.aviso-sintesis::text')
 		norm['date'] = extract_with_css('p.aviso-fecha::text')
 		norm['full_text'] = soup.get_text()
-		norm['type'] = type
-		norm['full_type'] = extract_with_css('p.aviso-norma::text')
-		norm['published_date'] = extract_with_css('p.itemdata span::text')
+		norm['type'] = dict(simple=type,
+							full_text=extract_with_css('p.aviso-norma::text'))
 		norm['anexos'] = anexos
 
 		return norm
