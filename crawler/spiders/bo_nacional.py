@@ -7,9 +7,28 @@ class BONacional(scrapy.Spider):
 	name = 'bo_nacional'
 	#allowed_domains = 'boletinoficial.gob.ar' FIXME
 
+	lua_script = """
+				function main(splash)
+				  splash.private_mode_enabled = false
+				  local url = splash.args.url
+				  assert(splash:go(url))
+				  assert(splash:wait(10))
+				  return {
+				    html = splash:html(),
+				    png = splash:png(),
+				    har = splash:har(),
+				  }
+				end
+				"""
+
 	def start_requests(self):
 		url = 'https://www.boletinoficial.gob.ar/'
-		yield SplashRequest(url=url, callback=self.parse)
+		yield SplashRequest(url=url,
+							callback=self.parse,
+							args={
+									'lua_source': self.lua_script,
+								},
+							)
 
 	def parse(self, response):
 		norms = response.css('div#PorCadaNorma')
@@ -19,7 +38,13 @@ class BONacional(scrapy.Spider):
 		norm = NormaNacional()
 		for url in list(norm_urls):
 			url = response.urljoin(url)
-			yield SplashRequest(url=url, callback=self.parse_details, meta={'norm': norm})
+			yield SplashRequest(url=url,
+								callback=self.parse_details,
+								args={
+									'lua_source': self.lua_script,
+								},
+								meta={'norm': norm},
+								)
 
 	def parse_details(self, response):
 		def extract_with_css(query):
@@ -33,7 +58,7 @@ class BONacional(scrapy.Spider):
 			type = 'None'
 
 
-		full_text = extract_with_css('div#print')
+		full_text = extract_with_css('div.item')
 		soup = BeautifulSoup(full_text, 'html.parser')
 
 		norm['title'] = extract_with_css('p.aviso-titulo::text')
