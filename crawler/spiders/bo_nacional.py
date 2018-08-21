@@ -9,7 +9,7 @@ class BONacional(scrapy.Spider):
 
 	lua_script = """
 				function main(splash)
-				  splash.private_mode_enabled = false
+				  splash.private_mode_enabled = true
 				  local url = splash.args.url
 				  assert(splash:go(url))
 				  assert(splash:wait(10))
@@ -25,8 +25,10 @@ class BONacional(scrapy.Spider):
 		url = 'https://www.boletinoficial.gob.ar/'
 		yield SplashRequest(url=url,
 							callback=self.parse,
+							endpoint='execute',
 							args={
 									'lua_source': self.lua_script,
+									'wait': 5,
 								},
 							)
 
@@ -40,8 +42,10 @@ class BONacional(scrapy.Spider):
 			url = response.urljoin(url)
 			yield SplashRequest(url=url,
 								callback=self.parse_details,
+								endpoint='execute',
 								args={
 									'lua_source': self.lua_script,
+									'wait': 5,
 								},
 								meta={'norm': norm},
 								)
