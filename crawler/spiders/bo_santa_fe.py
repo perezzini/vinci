@@ -1,16 +1,34 @@
 import scrapy
 from scrapy_splash import SplashRequest
 from bs4 import BeautifulSoup
-from crawler.items import Norma
+from crawler.items import NormaSantaFe
 import utils
 
 class BOSantaFe(scrapy.Spider):
 	name = 'bo_santa_fe'
-	#allowed_domains = 'boletinoficial.gob.ar' FIXME
+
+	lua_script = """
+                function main(splash)
+                  splash.private_mode_enabled = true
+                  local url = splash.args.url
+                  assert(splash:go(url))
+                  assert(splash:wait(10))
+                  return {
+                    html = splash:html(),
+                    har = splash:har(),
+                  }
+                end
+                """  # TODO: must better understand this...
 
 	def start_requests(self):
 		url = 'https://www.santafe.gob.ar/boletinoficial/'
-		yield SplashRequest(url=url, callback=self.parse)
+		yield SplashRequest(url=url,
+							callback=self.parse,
+							endpoint='execute',
+							args={
+								'lua_source': self.lua_script,
+								'wait': 5,
+							})
 
 	def parse(self, response):
 		def extract_with_css(query):
@@ -19,7 +37,13 @@ class BOSantaFe(scrapy.Spider):
 		url = extract_with_css('a.link::attr(href)').extract_first()  # TODO: check expression
 		url = response.urljoin(url)
 
-		yield SplashRequest(url=url, callback=self.parse_norms)
+		yield SplashRequest(url=url,
+							callback=self.parse_norms,
+							endpoint='execute',
+							args={
+								'lua_source': self.lua_script,
+								'wait': 5,
+							})
 
 	def parse_norms(self, response):
 		def extract_with_css(query):
@@ -28,7 +52,16 @@ class BOSantaFe(scrapy.Spider):
 		urls = extract_with_css('tr.texto_resumen_BO a::attr(href)').extract()  # TODO: check expressions
 
 		for url in urls:
-			yield SplashRequest(url=url, callback=self.parse_details, meta={'type': Norma.get_type_of_norm(url)})
+			yield SplashRequest(url=url,
+								callback=self.parse_details,
+								meta={
+									'type': NormaSantaFe.get_type_of_norm(url),
+								},
+								endpoint='execute',
+								args={
+									'lua_source': self.lua_script,
+									'wait': 5,
+								})
 
 	def parse_details(self, response):
 		def extract_with_css(query):
@@ -45,7 +78,7 @@ class BOSantaFe(scrapy.Spider):
 		norms = list(map(lambda l: [' '.join(l)], norms))  # A list of separated norms
 
 		for norm in norms:
-			yield Norma({
+			yield NormaSantaFe({
 					'full_text': norm[0],
 					'type': response.meta['type'],
 				})

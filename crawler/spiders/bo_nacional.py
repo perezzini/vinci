@@ -15,11 +15,10 @@ class BONacional(scrapy.Spider):
 				  assert(splash:wait(10))
 				  return {
 				    html = splash:html(),
-				    png = splash:png(),
 				    har = splash:har(),
 				  }
 				end
-				"""
+				"""  # TODO: must better understand this. Note that splash.private_mode_enabled = true
 
 	def start_requests(self):
 		url = 'https://www.boletinoficial.gob.ar/'
@@ -29,8 +28,7 @@ class BONacional(scrapy.Spider):
 							args={
 									'lua_source': self.lua_script,
 									'wait': 5,
-								},
-							)
+								})
 
 	def parse(self, response):
 		norms = response.css('div#PorCadaNorma')
@@ -47,8 +45,9 @@ class BONacional(scrapy.Spider):
 									'lua_source': self.lua_script,
 									'wait': 5,
 								},
-								meta={'norm': norm},
-								)
+								meta={
+									'norm': norm
+								})
 
 	def parse_details(self, response):
 		def extract_with_css(query):
@@ -56,19 +55,26 @@ class BONacional(scrapy.Spider):
 
 		norm = response.meta['norm']
 
+		full_text = extract_with_css('div.item')
+		soup = BeautifulSoup(full_text, 'html.parser')
+
 		if extract_with_css('p.aviso-norma::text'):
 			type = NormaNacional.get_type_of_norm(extract_with_css('p.aviso-norma::text'))
 		else:
-			type = 'None'
+			type = None
 
-
-		full_text = extract_with_css('div.item')
-		soup = BeautifulSoup(full_text, 'html.parser')
+		if response.css('div#anexos a::attr(href)'):
+			anexos = list(map(lambda url: response.urljoin(url), response.css('div#anexos a::attr(href)').extract()))
+		else:
+			anexos = None
 
 		norm['title'] = extract_with_css('p.aviso-titulo::text')
 		norm['abstract'] = extract_with_css('p.aviso-sintesis::text')
 		norm['date'] = extract_with_css('p.aviso-fecha::text')
 		norm['full_text'] = soup.get_text()
 		norm['type'] = type
+		norm['full_type'] = extract_with_css('p.aviso-norma::text')
+		norm['published_date'] = extract_with_css('p.itemdata span::text')
+		norm['anexos'] = anexos
 
 		return norm
