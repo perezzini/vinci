@@ -6,18 +6,18 @@ class Test(scrapy.Spider):
 	name = 'test'
 
 	lua_script = """
-	function main(splash)
-  splash.private_mode_enabled = false
-  local url = splash.args.url
-  assert(splash:go(url))
-  assert(splash:wait(10))
-  return {
-    html = splash:html(),
-    png = splash:png(),
-    har = splash:har(),
-  }
-end
-"""
+				function main(splash)
+			  splash.private_mode_enabled = true
+			  local url = splash.args.url
+			  assert(splash:go(url))
+			  assert(splash:wait(10))
+			  return {
+			    html = splash:html(),
+			    png = splash:png(),
+			    har = splash:har(),
+			  }
+			end
+			"""
 
 	def start_requests(self):
 		url = 'https://www.boletinoficial.gob.ar/#!DetalleNorma/190173/20180821'
@@ -26,6 +26,7 @@ end
 							endpoint='execute',
 							args={
 								'lua_source': self.lua_script,
+								'wait': 5,
 							})
 
 	def parse(self, response):
