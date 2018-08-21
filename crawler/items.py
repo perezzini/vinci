@@ -11,8 +11,12 @@ class Author(scrapy.Item):
 	description = scrapy.Field()
 
 class Norma(scrapy.Item):
+	title = scrapy.Field()
+	abstract = scrapy.Field()
+	anexos = scrapy.Field()
 	full_text = scrapy.Field()
 	type = scrapy.Field()
+	date = scrapy.Field()
 
 	def get_type_of_norm(txt):
 			txt = txt.lower()
@@ -45,14 +49,3 @@ class Norma(scrapy.Item):
 				return 'o'
 			else:
 				return 'None'
-
-class NormaNacional(Norma):
-	title = scrapy.Field()
-	abstract = scrapy.Field()
-	date = scrapy.Field()
-	full_type = scrapy.Field()
-	published_date = scrapy.Field()
-	anexos = scrapy.Field()
-
-class NormaSantaFe(Norma):
-	pass
