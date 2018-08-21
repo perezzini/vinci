@@ -15,11 +15,10 @@ class BONacional(scrapy.Spider):
 				  assert(splash:wait(10))
 				  return {
 				    html = splash:html(),
-				    png = splash:png(),
 				    har = splash:har(),
 				  }
 				end
-				"""
+				"""  # TODO: must better understand this. Note that splash.private_mode_enabled = true
 
 	def start_requests(self):
 		url = 'https://www.boletinoficial.gob.ar/'
