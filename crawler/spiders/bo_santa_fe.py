@@ -76,7 +76,7 @@ class BOSantaFe(scrapy.Spider):
 
 		norms = utils.split_list_by_sep(lines, '__________________________________________')
 
-		norms = list(map(lambda l: [' '.join(l)], norms))  # A list of separated norms
+		norms = list(map(lambda l: [' '.join(l)], norms))  # A list of separated norms from the same source
 
 		for norm in norms:
 			yield Norm(_id=ObjectId(),
