@@ -11,6 +11,7 @@ class Author(scrapy.Item):
 	description = scrapy.Field()
 
 class Norm(scrapy.Item):
+	_id = scrapy.Field()
 	title = scrapy.Field()
 	abstract = scrapy.Field()
 	anexos = scrapy.Field()
