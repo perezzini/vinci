@@ -1,7 +1,7 @@
 import scrapy
 from scrapy_splash import SplashRequest
 from bs4 import BeautifulSoup
-from crawler.items import Norma
+from crawler.items import Norm
 import utils
 
 class BOSantaFe(scrapy.Spider):
@@ -55,7 +55,7 @@ class BOSantaFe(scrapy.Spider):
 			yield SplashRequest(url=url,
 								callback=self.parse_details,
 								meta={
-									'type': Norma.get_type_of_norm(url),
+									'type': Norm.get_type_of_norm(url),
 								},
 								endpoint='execute',
 								args={
@@ -78,5 +78,5 @@ class BOSantaFe(scrapy.Spider):
 		norms = list(map(lambda l: [' '.join(l)], norms))  # A list of separated norms
 
 		for norm in norms:
-			yield Norma(full_text=norm[0],
+			yield Norm(full_text=norm[0],
 						type=dict(simple=response.meta['type']))

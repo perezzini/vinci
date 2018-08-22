@@ -1,7 +1,7 @@
 import scrapy
 from scrapy_splash import SplashRequest
 from bs4 import BeautifulSoup
-from crawler.items import Norma
+from crawler.items import Norm
 
 class BONacional(scrapy.Spider):
 	name = 'bo_nacional'
@@ -35,7 +35,7 @@ class BONacional(scrapy.Spider):
 		norm_items = norms.css('div.itemsection')
 		norm_urls = norm_items.css('h3 > a::attr(href)').extract()
 
-		norm = Norma()
+		norm = Norm()
 		for url in list(norm_urls):
 			url = response.urljoin(url)
 			yield SplashRequest(url=url,
@@ -59,7 +59,7 @@ class BONacional(scrapy.Spider):
 		soup = BeautifulSoup(full_text, 'html.parser')
 
 		if extract_with_css('p.aviso-norma::text'):
-			type = Norma.get_type_of_norm(extract_with_css('p.aviso-norma::text'))
+			type = Norm.get_type_of_norm(extract_with_css('p.aviso-norma::text'))
 		else:
 			type = None
 

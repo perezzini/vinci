@@ -10,7 +10,7 @@ import scrapy
 class Author(scrapy.Item):
 	description = scrapy.Field()
 
-class Norma(scrapy.Item):
+class Norm(scrapy.Item):
 	title = scrapy.Field()
 	abstract = scrapy.Field()
 	anexos = scrapy.Field()
