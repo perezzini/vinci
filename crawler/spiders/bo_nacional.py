@@ -2,6 +2,7 @@ import scrapy
 from scrapy_splash import SplashRequest
 from bs4 import BeautifulSoup
 from crawler.items import Norm
+from bson.objectid import ObjectId
 
 class BONacional(scrapy.Spider):
 	name = 'bo_nacional'
@@ -68,6 +69,7 @@ class BONacional(scrapy.Spider):
 		else:
 			anexos = None
 
+		norm['_id'] = ObjectId()
 		norm['title'] = extract_with_css('p.aviso-titulo::text')
 		norm['abstract'] = extract_with_css('p.aviso-sintesis::text')
 		norm['date'] = extract_with_css('p.aviso-fecha::text')
