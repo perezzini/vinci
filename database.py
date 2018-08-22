@@ -4,13 +4,10 @@ import settings
 class DB():
 	def __init__(self):
 		self.client = pymongo.MongoClient(settings.DB_SERVER, int(settings.DB_PORT))  # Connect to client
+		self.db = self.client[settings.DB_NAME]
 
 	def close(self):
 		self.client.close()
-
-	def import_db(self, db):
-		self.db = self.client[db]
-		return self.db
 
 	def get_db_name(self):
 		return self.db.name
