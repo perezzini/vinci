@@ -37,7 +37,9 @@ class BONacional(scrapy.Spider):
 		norm_urls = norm_items.css('h3 > a::attr(href)').extract()
 
 		norm = Norm()
+
 		for url in list(norm_urls):
+			_id = ObjectId()
 			url = response.urljoin(url)
 			yield SplashRequest(url=url,
 								callback=self.parse_details,
@@ -47,7 +49,8 @@ class BONacional(scrapy.Spider):
 									'wait': 5,
 								},
 								meta={
-									'norm': norm
+									'norm': norm,
+									'_id': _id,
 								})
 
 	def parse_details(self, response):
@@ -69,7 +72,7 @@ class BONacional(scrapy.Spider):
 		else:
 			anexos = None
 
-		norm['_id'] = ObjectId()
+		norm['_id'] = response.meta['_id']
 		norm['title'] = extract_with_css('p.aviso-titulo::text')
 		norm['abstract'] = extract_with_css('p.aviso-sintesis::text')
 		norm['date'] = extract_with_css('p.aviso-fecha::text')
