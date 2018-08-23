@@ -11,7 +11,6 @@ from datetime import date
 class DBPipeline(object):
 	def __init__(self):
 		self.items = list()
-		self.log = Log()
 
 	def open_spider(self, spider):
 		self.mongo_client = DB()
