@@ -79,6 +79,6 @@ class BOSantaFe(scrapy.Spider):
 		norms = list(map(lambda l: [' '.join(l)], norms))  # A list of separated norms from the same source
 
 		for norm in norms:
-			yield Norm(_id=ObjectId(),
+			return Norm(_id=ObjectId(),
 						full_text=norm[0],
 						type=dict(simple=response.meta['type']))
