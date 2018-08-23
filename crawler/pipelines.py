@@ -10,22 +10,22 @@ from datetime import date
 
 class DBPipeline(object):
 	def __init__(self):
-		self.mongo_client = DB()
+		self.items = list()
+		self.log = Log()
 
 	def open_spider(self, spider):
+		self.mongo_client = DB()
 		self.collection_name = spider.name
-		self.items = list()
 
 	def close_spider(self, spider):
 		document = {
 			'date': str(date.today()),
-			'data': list(map(lambda a: dict(a), self.items))
+			'data': self.items,
 		}
 		self.mongo_client.insert_one(self.collection_name, document)
 		self.mongo_client.close()
-
 		self.items = list()
 
 	def process_item(self, item, spider):
-		self.items.append(item)
+		self.items.append(dict(item))
 		return item
