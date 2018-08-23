@@ -14,10 +14,10 @@ class Norm(scrapy.Item):
 	_id = scrapy.Field()
 	title = scrapy.Field()
 	abstract = scrapy.Field()
-	anexos = scrapy.Field()
+	annexes = scrapy.Field()
 	full_text = scrapy.Field()
 	type = scrapy.Field()
-	date = scrapy.Field()
+	published = scrapy.Field()
 
 	def get_type_of_norm(txt):
 			txt = txt.lower()

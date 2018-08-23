@@ -36,8 +36,6 @@ class BONacional(scrapy.Spider):
 		norm_items = norms.css('div.itemsection')
 		norm_urls = norm_items.css('h3 > a::attr(href)').extract()
 
-		norm = Norm()
-
 		for url in list(norm_urls):
 			url = response.urljoin(url)
 			yield SplashRequest(url=url,
@@ -46,16 +44,11 @@ class BONacional(scrapy.Spider):
 								args={
 									'lua_source': self.lua_script,
 									'wait': 5,
-								},
-								meta={
-									'norm': norm,
 								})
 
 	def parse_details(self, response):
 		def extract_with_css(query):
 			return response.css(query).extract_first()
-
-		norm = response.meta['norm']
 
 		full_text = extract_with_css('div.item')
 		soup = BeautifulSoup(full_text, 'html.parser')
@@ -66,17 +59,17 @@ class BONacional(scrapy.Spider):
 			type = None
 
 		if response.css('div#anexos a::attr(href)'):
-			anexos = list(map(lambda url: response.urljoin(url), response.css('div#anexos a::attr(href)').extract()))
+			annexes = list(map(lambda url: response.urljoin(url), response.css('div#anexos a::attr(href)').extract()))
 		else:
-			anexos = None
+			annexes = None
 
-		norm['_id'] = ObjectId()
-		norm['title'] = extract_with_css('p.aviso-titulo::text')
-		norm['abstract'] = extract_with_css('p.aviso-sintesis::text')
-		norm['date'] = extract_with_css('p.aviso-fecha::text')
-		norm['full_text'] = soup.get_text()
-		norm['type'] = dict(simple=type,
-							full_text=extract_with_css('p.aviso-norma::text'))
-		norm['anexos'] = anexos
-
-		return norm
+		return Norm({
+				'_id': ObjectId(),
+				'title': extract_with_css('p.aviso-titulo::text'),
+				'abstract': extract_with_css('p.aviso-sintesis::text'),
+				'published': extract_with_css('p.aviso-fecha::text'),
+				'full_text': soup.get_text(),
+				'type': dict(simple=type,
+							full_text=extract_with_css('p.aviso-norma::text')),
+				'annexes': annexes,
+			})
