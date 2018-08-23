@@ -39,7 +39,6 @@ class BONacional(scrapy.Spider):
 		norm = Norm()
 
 		for url in list(norm_urls):
-			_id = ObjectId()
 			url = response.urljoin(url)
 			yield SplashRequest(url=url,
 								callback=self.parse_details,
@@ -50,7 +49,6 @@ class BONacional(scrapy.Spider):
 								},
 								meta={
 									'norm': norm,
-									'_id': _id,
 								})
 
 	def parse_details(self, response):
@@ -72,7 +70,7 @@ class BONacional(scrapy.Spider):
 		else:
 			anexos = None
 
-		norm['_id'] = response.meta['_id']
+		norm['_id'] = ObjectId()
 		norm['title'] = extract_with_css('p.aviso-titulo::text')
 		norm['abstract'] = extract_with_css('p.aviso-sintesis::text')
 		norm['date'] = extract_with_css('p.aviso-fecha::text')
