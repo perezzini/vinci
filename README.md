@@ -1,4 +1,4 @@
-# vinci
+# vinci: *Legal Requirements Engineering*
 Computer Science thesis development
 
 ## Crawler
