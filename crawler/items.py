@@ -48,5 +48,7 @@ class Norm(scrapy.Item):
 				return 'da'
 			elif 'ordenanza' in txt:
 				return 'o'
+			elif 'licitacion' in txt:
+				return 'lic'
 			else:
 				return 'None'
