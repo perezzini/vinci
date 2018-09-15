@@ -15,5 +15,8 @@ pymongo = "*"
 scrapyd = "*"
 scrapyd-client = "*"
 unidecode = "*"
+jupyter = "*"
+rdflib = "*"
+networkx = "*"
 
 [dev-packages]
