@@ -16,5 +16,7 @@ scrapyd = "*"
 scrapyd-client = "*"
 unidecode = "*"
 nltk = "*"
+rdflib = "*"
+networkx = "*"
 
 [dev-packages]
