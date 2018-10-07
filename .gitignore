@@ -109,3 +109,6 @@ crawler/outputs/
 # scrapyd-client generated files
 dbs/
 twistd.pid
+
+# Data test files
+data/test/
