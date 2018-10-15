@@ -52,6 +52,9 @@ class SKOS(RDF):
         else:
             return False
 
+    # Not working well. Must use SPARQL, but it fails too...
+    # q = prepareQuery('SELECT ?concept WHERE { ?concept skos:prefLabel ?term .}', initNs = {'skos': SKOS })
+    # FIXME: find some solution to retrieve concepts given prefLabels
     def get_uri_from_term(self, term):
         if self.term_exists(term):
             term = term.lower()
@@ -64,10 +67,26 @@ class SKOS(RDF):
         label = self.vocab.get_preferred_label(uri)[0][1]
         return self.literal_to_text(label).lower()
 
-    def search_tree(self, property, node):
+    def get_dfs_tree(self, property, node):
         if property not in self.properties:
             raise Exception(property + ' is not a SKOS property')
         di_graph = DiGraph()
+
         for s, p, o in self.vocab.triples(None, SKS[property], None):
             di_graph.add_edge(s, o)
-        return list(map(lambda uri: self.get_term_from_uri(uri), di_graph.dfs_tree(node)))
+
+        tree_edges = di_graph.dfs_tree(node)
+
+        di_graph.clear()
+        di_graph.add_edges_from(list(tree_edges))
+
+        # label nodes with literals
+        for n1, n2 in di_graph.edges():
+            di_graph.nodes()[n1]['label'] = self.get_term_from_uri(n1)
+            di_graph.nodes()[n2]['label'] = self.get_term_from_uri(n2)
+
+        return di_graph
+
+    def get_terms_from_tree(self, tree):
+        nodes = list(tree.nodes())
+        return list(map(lambda uri: self.get_term_from_uri(uri), nodes))
