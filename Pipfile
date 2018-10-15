@@ -18,5 +18,8 @@ unidecode = "*"
 nltk = "*"
 rdflib = "*"
 networkx = "*"
+jupyter = "*"
+matplotlib = "*"
+pygraphviz = "*"
 
 [dev-packages]
