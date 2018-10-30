@@ -1,5 +1,6 @@
 import itertools
 import unidecode
+import re
 
 def split_list_by_sep(l, sep):
 	if sep in l:
@@ -9,3 +10,6 @@ def split_list_by_sep(l, sep):
 
 def to_ascii(txt):
 	return unidecode.unidecode(txt)
+
+def has_numbers(string):
+	return bool(re.search(r'\d', string))
