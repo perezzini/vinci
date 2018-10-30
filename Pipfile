@@ -20,6 +20,9 @@ rdflib = "*"
 networkx = "*"
 jupyter = "*"
 matplotlib = "*"
+pandas = "*"
+gensim = "*"
 pygraphviz = "*"
+dask = {extras = ["bag"], version = "*"}
 
 [dev-packages]
