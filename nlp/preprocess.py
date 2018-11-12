@@ -4,14 +4,14 @@ from nltk import sent_tokenize
 import re
 from unidecode import unidecode
 import multiprocessing as mp
-from nlp.lemmatizer import Lemmatizer
+from nlp.es_lemmatizer import ESLemmatizer
 from utils import has_numbers
 
 class Preprocess():
     def __init__(self, lang):
         self.lang = lang
         self.stopwords = set(stopwords.words(lang))
-        self.lemm = Lemmatizer()
+        self.lemm = ESLemmatizer()
         self.tokenizer = RegexpTokenizer(r'\w+')
 
     def word_tokenization(self, text):
@@ -37,6 +37,6 @@ class Preprocess():
         tokens = self.del_stopwords(self.word_tokenization(text))
         return [self.unidecode(self.lemmatization(token)) for token in tokens]
 
-    def simple_process(self, text):
+    def basic_process(self, text):
         tokens = self.word_tokenization(text)
         return [self.unidecode(token) for token in tokens]
