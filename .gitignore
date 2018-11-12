@@ -113,3 +113,4 @@ twistd.pid
 
 # Data test files
 data/test/
+data/saij/norms
