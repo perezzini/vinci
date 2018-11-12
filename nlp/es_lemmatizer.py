@@ -1,8 +1,7 @@
 import pandas as pd
 from unidecode import unidecode
-from dask import dataframe as dd
 
-class Lemmatizer():
+class ESLemmatizer():
     def __init__(self):
         self.dict = pd.read_csv('data/lemmatizers/es.txt', delim_whitespace=True)
         self.dict = self.dict.set_index('key')['value'].to_dict()
