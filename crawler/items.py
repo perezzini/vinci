@@ -11,13 +11,12 @@ class Author(scrapy.Item):
 	description = scrapy.Field()
 
 class Norm(scrapy.Item):
-	_id = scrapy.Field()
+	published_at = scrapy.Field()
 	title = scrapy.Field()
 	abstract = scrapy.Field()
 	annexes = scrapy.Field()
-	full_text = scrapy.Field()
+	text = scrapy.Field()
 	type = scrapy.Field()
-	published = scrapy.Field()
 
 	def get_type_of_norm(txt):
 			txt = txt.lower()
