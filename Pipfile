@@ -15,5 +15,13 @@ pymongo = "*"
 scrapyd = "*"
 scrapyd-client = "*"
 unidecode = "*"
+nltk = "*"
+rdflib = "*"
+networkx = "*"
+jupyter = "*"
+matplotlib = "*"
+gensim = "*"
+pygraphviz = "*"
+pandas = "*"
 
 [dev-packages]

@@ -4,6 +4,8 @@ from bs4 import BeautifulSoup
 from crawler.items import Norm
 from bson.objectid import ObjectId
 
+from datetime import date
+
 class BONacional(scrapy.Spider):
 	name = 'bo_nacional'
 	#allowed_domains = 'boletinoficial.gob.ar' FIXME
@@ -63,13 +65,12 @@ class BONacional(scrapy.Spider):
 		else:
 			annexes = None
 
-		return Norm({
-				'_id': ObjectId(),
-				'title': extract_with_css('p.aviso-titulo::text'),
-				'abstract': extract_with_css('p.aviso-sintesis::text'),
-				'published': extract_with_css('p.aviso-fecha::text'),
-				'full_text': soup.get_text(),
-				'type': dict(simple=type,
-							full_text=extract_with_css('p.aviso-norma::text')),
-				'annexes': annexes,
-			})
+		yield Norm({
+			'published_at': str(date.today()),
+			'title': extract_with_css('p.aviso-titulo::text'),
+			'abstract': extract_with_css('p.aviso-sintesis::text'),
+			'text': soup.get_text(),
+			'type': dict(simple=type,
+						full_text=extract_with_css('p.aviso-norma::text')),
+			'annexes': annexes
+		})

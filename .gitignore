@@ -71,6 +71,7 @@ target/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+*.ipynb
 
 # pyenv
 .python-version
@@ -109,3 +110,9 @@ crawler/outputs/
 # scrapyd-client generated files
 dbs/
 twistd.pid
+
+# Data files
+data/
+
+# Software notes
+SOFT-NOTES.md

@@ -1,0 +1,174 @@
+{
+	"vocabularyservices": {
+		"status": "available",
+		"status_skos_core": "disable",
+		"param": {
+			"term": [
+				"task",
+				"arg",
+				"output"
+			],
+			"task": "Action to do",
+			"arg": "arguments for task action (eg: string for search task, numerical id for specific term data)",
+			"output": "Output format, can be JSON or XML. Optional parameter, XML by default "
+		},
+		"web_service_version": "1.6",
+		"version": "TemaTres 3.0",
+		"fetchVocabularyData": {
+			"action": "Retrieve data about vocabulary",
+			"task": "fetchVocabularyData ",
+			"arg": "1",
+			"example": "http://vocabularios.saij.gob.ar/saij/services.php?task=fetchVocabularyData"
+		},
+		"fetchTopTerms": {
+			"action": " Retrieve vocabulary top terms",
+			"task": "fetchTopTerms",
+			"arg": " none",
+			"example": "http://vocabularios.saij.gob.ar/saij/services.php?task=fetchTopTerms"
+		},
+		"search": {
+			"action": "Search and retrieve terms",
+			"task": "search",
+			"arg": "search expresion (string)",
+			"example": "http://vocabularios.saij.gob.ar/saij/services.php?task=search&arg=peace"
+		},
+		"fetch": {
+			"action": "Search and retrieve terms using exact matching",
+			"task": "fetch",
+			"arg": "search expresion (string)",
+			"example": "http://vocabularios.saij.gob.ar/saij/services.php?task=fetch&arg=peace"
+		},
+		"searchNotes": {
+			"action": "Retrieve terms searching in notes",
+			"task": "searchNotes",
+			"arg": "search expresion (string)",
+			"example": "http://vocabularios.saij.gob.ar/saij/services.php?task=searchNotes&arg=peace"
+		},
+		"suggest": {
+			"action": "Simple search and retrieve terms who start with string (only string)",
+			"task": "suggest",
+			"arg": "search expresion (string)",
+			"example": "http://vocabularios.saij.gob.ar/saij/services.php?task=suggest&arg=pea"
+		},
+		"suggestDetails": {
+			"action": "Search and retrieve terms who start with string (term_id, term, and more data)",
+			"task": "suggestDetails",
+			"arg": "search expresion (string)",
+			"example": "http://vocabularios.saij.gob.ar/saij/services.php?task=suggestDetails&arg=pea"
+		},
+		"fetchCode": {
+			"action": "Retrieve simple term data by code",
+			"task": "fetchCode",
+			"arg": "code (string)",
+			"example": "http://vocabularios.saij.gob.ar/saij/services.php?task=fetchCode&arg=01.03.04"
+		},
+		"letter": {
+			"action": "Search and retrieve terms was beginning with letter $arg",
+			"task": "letter",
+			"arg": "one letter (for example: arg=a)",
+			"example": "http://vocabularios.saij.gob.ar/saij/services.php?task=letter&arg=a"
+		},
+		"fetchTerm": {
+			"action": " Retrieve simple term data ",
+			"task": "fetchTerm",
+			"arg": "one ID (int)",
+			"example": "http://vocabularios.saij.gob.ar/saij/services.php?task=fetchTerm&arg=1"
+		},
+		"fetchAlt": {
+			"action": " Retrieve alternative/non prefered terms for one ID ",
+			"task": "fetchAlt",
+			"arg": "one ID (int)",
+			"example": "http://vocabularios.saij.gob.ar/saij/services.php?task=fetchAlt&arg=1"
+		},
+		"fetchDown": {
+			"action": " Retrieve more specific terms for one ID ",
+			"task": "fetchDown",
+			"arg": "one ID (int)",
+			"example": "http://vocabularios.saij.gob.ar/saij/services.php?task=fetchDown&arg=1"
+		},
+		"fetchUp": {
+			"action": " Retrieve hierarquical structure for one ID ",
+			"task": "fetchUp",
+			"arg": "one ID (int)",
+			"example": "http://vocabularios.saij.gob.ar/saij/services.php?task=fetchUp&arg=1"
+		},
+		"fetchRelated": {
+			"action": " Retrieve related terms for one ID ",
+			"task": "fetchRelated",
+			"arg": "one ID (int)",
+			"example": "http://vocabularios.saij.gob.ar/saij/services.php?task=fetchRelated&arg=1"
+		},
+		"fetchNotes": {
+			"action": " Retrieve notes for one term ",
+			"task": "fetchNotes",
+			"arg": "one ID (int)",
+			"example": "http://vocabularios.saij.gob.ar/saij/services.php?task=fetchNotes&arg=1"
+		},
+		"fetchDirectTerms": {
+			"action": " Retrieve alternative, related and direct hieraquical terms for one term_id ",
+			"task": "fetchDirectTerms",
+			"arg": "one ID (int)",
+			"example": "http://vocabularios.saij.gob.ar/saij/services.php?task=fetchDirectTerms&arg=1"
+		},
+		"fetchURI": {
+			"action": "Search and retrieve data about URI or internet entities linked to one term_id",
+			"task": "fetchURI",
+			"arg": "one ID term_id (int)",
+			"example": "http://vocabularios.saij.gob.ar/saij/services.php?task=fetchURI&arg=1"
+		},
+		"fetchTargetTerms": {
+			"action": "Search and retrieve data about target terms mapped via web services for one term_id",
+			"task": "fetchTargetTerms",
+			"arg": "one ID term_id (int)",
+			"example": "http://vocabularios.saij.gob.ar/saij//services.php?task=fetchTargetTerms&arg=1"
+		},
+		"fetchSourceTerms": {
+			"action": "Search and retrieve terms mapped in target vocabulary for a given term",
+			"task": "fetchSourceTerms",
+			"arg": "term (string)",
+			"example": "http://vocabularios.saij.gob.ar/saij/services.php?task=fetchSourceTerm&arg=term"
+		},
+		"fetchTerms": {
+			"action": " Retrieve simple term data for some coma separated IDs (example: 3,6,98) ",
+			"task": "fetchTerms",
+			"arg": "some coma separated IDs (for example: arg=3,6,98)",
+			"example": "http://vocabularios.saij.gob.ar/saij/services.php?task=fetchTerms&arg=1,2,4"
+		},
+		"fetchRelatedTerms": {
+			"action": " Retrieve simple related term data for some coma separated terms IDs (example: 3,6,98) ",
+			"task": "fetchRelatedTerms",
+			"arg": "some coma separated IDs (for example: arg=3,6,98)",
+			"example": "http://vocabularios.saij.gob.ar/saij/services.php?task=fetchRelatedTerms&arg=1,4"
+		},
+		"fetchSimilar": {
+			"action": "Search and retrieve similar term for string search expresion ($arg)",
+			"task": "fetchSimilar",
+			"arg": "string (for example: arg=trrends)",
+			"example": "http://vocabularios.saij.gob.ar/saij/services.php?task=fetchSimilar&arg=a"
+		},
+		"fetchLast": {
+			"action": "Retrieves last terms created",
+			"task": "fetchLast",
+			"arg": "none",
+			"example": "http://vocabularios.saij.gob.ar/saij/services.php?task=fetchLast"
+		},
+		"randomTerm": {
+			"action": "Retrieves last random term data. Optionally you can filter terms with specific type of notes (use tag note, ex: NA for scope note)",
+			"task": "randomTerm",
+			"arg": "type note tag (optional)",
+			"example": "http://vocabularios.saij.gob.ar/saij/services.php?task=randomTerm&arg=NA"
+		},
+		"termsSince": {
+			"action": "Retrieve data about terms who was created or modified since given date",
+			"task": "termsSince",
+			"arg": "date from do you want to obtain data",
+			"example": "http://vocabularios.saij.gob.ar/saij/services.php?task=termsSince&arg=2017-04-05"
+		},
+		"relationsSince": {
+			"action": "Retrieve data about terminological relations who was created or modified since given date",
+			"task": "relationsSince",
+			"arg": "date from do you want to obtain data",
+			"example": "http://vocabularios.saij.gob.ar/saij/services.php?task=relationsSince&arg=2017-04-05"
+		}
+	}
+}
