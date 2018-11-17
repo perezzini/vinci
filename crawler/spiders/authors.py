@@ -44,6 +44,6 @@ class Authors(scrapy.Spider):
     def parse_details(self, response):
         container = response.css('div.author-details').extract_first()
         soup = BeautifulSoup(container, 'html.parser')
-        return Author({
+        yield Author({
             'description': soup.get_text()
         })
