@@ -111,6 +111,8 @@ crawler/outputs/
 dbs/
 twistd.pid
 
-# Data test files
-data/test/
-data/saij/norms
+# Data files
+data/
+
+# Software notes
+SOFT-NOTES.md
