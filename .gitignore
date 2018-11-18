@@ -112,7 +112,9 @@ dbs/
 twistd.pid
 
 # Data files
-data/
+data/saij
+data/word2vec
+data/old
 
 # Software notes
 SOFT-NOTES.md
