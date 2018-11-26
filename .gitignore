@@ -111,10 +111,8 @@ crawler/outputs/
 dbs/
 twistd.pid
 
-# Data files
-data/saij
-data/word2vec
-data/old
+# Project's data files
+ext_data/
 
 # Software notes
 SOFT-NOTES.md
