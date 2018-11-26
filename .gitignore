@@ -111,7 +111,7 @@ crawler/outputs/
 dbs/
 twistd.pid
 
-# Ignore project's data
+# Project data
 ext_data/
 
 # Software notes
