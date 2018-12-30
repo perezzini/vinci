@@ -6,8 +6,8 @@ from bson.objectid import ObjectId
 
 from datetime import date
 
-class BONacional(scrapy.Spider):
-	name = 'bo_nacional'
+class BONacionalDaily(scrapy.Spider):
+	name = 'bo_nacional_daily'
 	#allowed_domains = 'boletinoficial.gob.ar' FIXME
 
 	lua_script = """
@@ -30,7 +30,6 @@ class BONacional(scrapy.Spider):
 							endpoint='execute',
 							args={
 									'lua_source': self.lua_script,
-									'wait': 5,
 								})
 
 	def parse(self, response):
@@ -45,7 +44,9 @@ class BONacional(scrapy.Spider):
 								endpoint='execute',
 								args={
 									'lua_source': self.lua_script,
-									'wait': 5,
+								},
+								meta={
+									'link': url,
 								})
 
 	def parse_details(self, response):
@@ -56,7 +57,7 @@ class BONacional(scrapy.Spider):
 		soup = BeautifulSoup(full_text, 'html.parser')
 
 		if extract_with_css('p.aviso-norma::text'):
-			type = Norm.get_type_of_norm(extract_with_css('p.aviso-norma::text'))
+			type = Norm.get_type_from_text(extract_with_css('p.aviso-norma::text'))
 		else:
 			type = None
 
@@ -72,5 +73,7 @@ class BONacional(scrapy.Spider):
 			'text': soup.get_text(),
 			'type': dict(simple=type,
 						full_text=extract_with_css('p.aviso-norma::text')),
-			'annexes': annexes
+			'annexes': annexes,
+			'link': response.meta['link'],
+			'html': response.text
 		})
