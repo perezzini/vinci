@@ -17,37 +17,40 @@ class Norm(scrapy.Item):
 	annexes = scrapy.Field()
 	text = scrapy.Field()
 	type = scrapy.Field()
+	link = scrapy.Field()
+	html = scrapy.Field()
 
-	def get_type_of_norm(txt):
+	# TODO: re-design this
+	def get_type_from_text(txt):
 			txt = txt.lower()
 
 			if 'decreto' in txt:
-				return 'd'
+				return 'decreto'
 			elif 'aviso' in txt:
-				return 'a'
+				return 'aviso'
 			elif 'convocatoria' in txt:
-				return 'c'
+				return 'convocatoria'
 			elif 'contrato' in txt:
-				return 'cont'
+				return 'contrato'
 			elif 'remate' in txt:
-				return 'rem'
-			elif 'edictos' in txt:
-				return 'e'
+				return 'remate'
+			elif 'edicto' in txt:
+				return 'edicto'
 			elif 'resolucion' in txt:
-				return 'r'
+				return 'resolucion'
 			elif 'resolucion general' in txt:
-				return 'rg'
+				return 'resolucion general'
 			elif 'resolucion sintetizada' in txt:
-				return 'rs'
+				return 'resolucion sintetizada'
 			elif 'disposicion' in txt:
-				return 'disp'
+				return 'disposicion'
 			elif 'ley' in txt:
-				return 'l'
+				return 'ley'
 			elif 'decision administrativa' in txt:
-				return 'da'
+				return 'decision administrativa'
 			elif 'ordenanza' in txt:
-				return 'o'
+				return 'ordenanza'
 			elif 'licitacion' in txt:
-				return 'lic'
+				return 'licitacion'
 			else:
 				return 'None'
