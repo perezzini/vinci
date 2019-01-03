@@ -6,16 +6,15 @@ from bson.objectid import ObjectId
 
 from datetime import date
 
-class BONacional(scrapy.Spider):
-	name = 'bo_nacional'
-	#allowed_domains = 'boletinoficial.gob.ar' FIXME
+class BONacionalDaily(scrapy.Spider):
+	name = 'bo_nacional_daily'
 
 	lua_script = """
 				function main(splash)
 				  splash.private_mode_enabled = true
 				  local url = splash.args.url
 				  assert(splash:go(url))
-				  assert(splash:wait(10))
+				  assert(splash:wait(5))
 				  return {
 				    html = splash:html(),
 				    har = splash:har(),
@@ -30,7 +29,6 @@ class BONacional(scrapy.Spider):
 							endpoint='execute',
 							args={
 									'lua_source': self.lua_script,
-									'wait': 5,
 								})
 
 	def parse(self, response):
@@ -45,7 +43,9 @@ class BONacional(scrapy.Spider):
 								endpoint='execute',
 								args={
 									'lua_source': self.lua_script,
-									'wait': 5,
+								},
+								meta={
+									'link': url,
 								})
 
 	def parse_details(self, response):
@@ -56,7 +56,7 @@ class BONacional(scrapy.Spider):
 		soup = BeautifulSoup(full_text, 'html.parser')
 
 		if extract_with_css('p.aviso-norma::text'):
-			type = Norm.get_type_of_norm(extract_with_css('p.aviso-norma::text'))
+			type = Norm.get_type_from_text(extract_with_css('p.aviso-norma::text'))
 		else:
 			type = None
 
@@ -66,11 +66,13 @@ class BONacional(scrapy.Spider):
 			annexes = None
 
 		yield Norm({
-			'published_at': str(date.today()),
+			'published_at': date.today().strftime('%Y-%m-%d'),
 			'title': extract_with_css('p.aviso-titulo::text'),
 			'abstract': extract_with_css('p.aviso-sintesis::text'),
 			'text': soup.get_text(),
 			'type': dict(simple=type,
-						full_text=extract_with_css('p.aviso-norma::text')),
-			'annexes': annexes
+						full=extract_with_css('p.aviso-norma::text')),
+			'annexes': annexes,
+			'link': response.meta['link'],
+			'html': response.text
 		})

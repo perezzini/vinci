@@ -9,7 +9,6 @@ python_version = "3.5"
 [packages]
 scrapy = "*"
 scrapy-splash = "*"
-"beautifulsoup4" = "*"
 python-dotenv = {extras = ["cli"], version = "*"}
 pymongo = "*"
 scrapyd = "*"
@@ -23,5 +22,7 @@ matplotlib = "*"
 gensim = "*"
 pygraphviz = "*"
 pandas = "*"
+textract = "*"
+"beautifulsoup4" = "*"
 
 [dev-packages]
