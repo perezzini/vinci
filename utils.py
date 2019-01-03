@@ -2,6 +2,7 @@ import itertools
 import unidecode
 import re
 import pandas as pd
+import urllib.parse
 
 def split_list_by_sep(l, sep):
 	# TODO: re-implement this
@@ -16,3 +17,10 @@ def has_numbers(string):
 def gen_all_dates(start, end):
     dates = pd.date_range(start=start, end=end)
     return (d for d in dates.strftime("%Y-%m-%d"))
+
+def iri_to_uri(iri):
+	uri = urllib.parse.urlsplit(iri)
+	uri = list(uri)
+	uri[2] = urllib.parse.quote(uri[2])
+	uri = urllib.parse.urlunsplit(uri)
+	return uri
