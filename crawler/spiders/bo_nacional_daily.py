@@ -8,14 +8,13 @@ from datetime import date
 
 class BONacionalDaily(scrapy.Spider):
 	name = 'bo_nacional_daily'
-	#allowed_domains = 'boletinoficial.gob.ar' FIXME
 
 	lua_script = """
 				function main(splash)
 				  splash.private_mode_enabled = true
 				  local url = splash.args.url
 				  assert(splash:go(url))
-				  assert(splash:wait(10))
+				  assert(splash:wait(5))
 				  return {
 				    html = splash:html(),
 				    har = splash:har(),
@@ -67,12 +66,12 @@ class BONacionalDaily(scrapy.Spider):
 			annexes = None
 
 		yield Norm({
-			'published_at': str(date.today()),
+			'published_at': date.today().strftime('%Y-%m-%d'),
 			'title': extract_with_css('p.aviso-titulo::text'),
 			'abstract': extract_with_css('p.aviso-sintesis::text'),
 			'text': soup.get_text(),
 			'type': dict(simple=type,
-						full_text=extract_with_css('p.aviso-norma::text')),
+						full=extract_with_css('p.aviso-norma::text')),
 			'annexes': annexes,
 			'link': response.meta['link'],
 			'html': response.text
