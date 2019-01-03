@@ -26,7 +26,7 @@ class BOSantaFeDaily(scrapy.Spider):
                 """  # TODO: must better understand this...
 
 	def start_requests(self):
-		url = 'https://www.santafe.gob.ar/boletinoficial/resumendia.php?pdia=ultimo&dia=' + '2018-12-11'
+		url = 'https://www.santafe.gob.ar/boletinoficial/resumendia.php?pdia=ultimo&dia=' + date.today().strftime('%Y-%m-%d')
 		yield SplashRequest(url=url,
 							callback=self.parse,
 							endpoint='execute',
