@@ -7,7 +7,7 @@ from bson.objectid import ObjectId
 from datetime import date
 import utils
 
-class BOSantaFe(scrapy.Spider):
+class BOSantaFeAll(scrapy.Spider):
 	name = 'bo_santa_fe_all'
 
 	lua_script = """
@@ -15,7 +15,7 @@ class BOSantaFe(scrapy.Spider):
                   splash.private_mode_enabled = true
                   local url = splash.args.url
                   assert(splash:go(url))
-                  assert(splash:wait(10))
+                  assert(splash:wait(5))
                   return {
                     html = splash:html(),
                     har = splash:har(),
@@ -33,7 +33,6 @@ class BOSantaFe(scrapy.Spider):
 								endpoint='execute',
 								args={
 									'lua_source': self.lua_script,
-									'wait': 5,
 								},
 								meta={
 									'date': date
@@ -49,13 +48,12 @@ class BOSantaFe(scrapy.Spider):
 			yield SplashRequest(url=url,
 								callback=self.parse_details,
 								meta={
-									'type': Norm.get_type_of_norm(url),
+									'type': Norm.get_type_from_text(url),
 									'date': response.meta['date']
 								},
 								endpoint='execute',
 								args={
 									'lua_source': self.lua_script,
-									'wait': 5,
 								})
 
 	def parse_details(self, response):
