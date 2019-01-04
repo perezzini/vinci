@@ -68,7 +68,7 @@ class BOSanLorenzoAll(scrapy.Spider):
         if len(pdf_link) == 1:
             # extract text from PDF
             # print('\nExtract text from PDF...')
-            res_name = '../ext_data/normatives/municipal/san-lorenzo/pdf/' + response.meta['link'].rsplit('/', 2)[-2] + '.pdf'
+            res_name = '../ext_data/normatives/municipal/san-lorenzo/datasets/pdf/' + response.meta['link'].rsplit('/', 2)[-2] + '.pdf'
             # print('res_name', res_name)
             pdf_name = pdf_link.extract_first()
             pdf_name = iri_to_uri(pdf_name)
