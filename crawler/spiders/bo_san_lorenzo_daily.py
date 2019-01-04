@@ -8,7 +8,6 @@ import textract
 import urllib
 from utils import iri_to_uri
 from dateutil import parser
-import sys
 
 class BOSanLorenzoDaily(scrapy.Spider):
     name = 'bo_san_lorenzo_daily'
@@ -30,8 +29,6 @@ class BOSanLorenzoDaily(scrapy.Spider):
         return response.css(query)
 
     def start_requests(self):
-        sys.path.append('../') # TODO: correct this. Paths in Python?
-
         url = 'http://sanlorenzo.gob.ar/ordenanzas/'
         today = date.today().strftime('%Y-%m-%d')
         yield SplashRequest(
@@ -105,7 +102,7 @@ class BOSanLorenzoDaily(scrapy.Spider):
         meta_date = meta_date.strftime('%Y-%m-%d')
         # print(meta_date)
 
-        if meta_date == '2018-11-23':
+        if meta_date == today:
             # crawl new norm
             # print('Entered parse_norm')
             type = self.extract_with_css(response, 'div.main-content h1.entry-title::text').extract_first()
@@ -114,7 +111,7 @@ class BOSanLorenzoDaily(scrapy.Spider):
             if len(pdf_link) == 1:
                 # extract text from PDF
                 # print('\nExtract text from PDF...')
-                res_name = '../ext_data/normatives/municipal/san-lorenzo/datasets/pdf/' + response.meta['link'].rsplit('/', 2)[-2] + '.pdf'
+                res_name = '/home/luciano/Documents/unr/fceia/lcc/tesina/ing-legal/repos/vinci/ext_data/normatives/municipal/san-lorenzo/datasets/pdf/' + response.meta['link'].rsplit('/', 2)[-2] + '.pdf'
                 # print('res_name', res_name)
                 pdf_name = pdf_link.extract_first()
                 pdf_name = iri_to_uri(pdf_name)
