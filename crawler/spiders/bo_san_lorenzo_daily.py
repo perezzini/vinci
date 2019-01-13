@@ -8,6 +8,7 @@ import textract
 import urllib
 from utils import iri_to_uri
 from dateutil import parser
+import os
 
 class BOSanLorenzoDaily(scrapy.Spider):
     name = 'bo_san_lorenzo_daily'
@@ -29,7 +30,7 @@ class BOSanLorenzoDaily(scrapy.Spider):
         return response.css(query)
 
     def start_requests(self):
-        url = 'http://sanlorenzo.gob.ar/ordenanzas/'
+        url = os.getenv('BO_MUNICIPAL')
         today = date.today().strftime('%Y-%m-%d')
         yield SplashRequest(
             url=url,
@@ -111,7 +112,7 @@ class BOSanLorenzoDaily(scrapy.Spider):
             if len(pdf_link) == 1:
                 # extract text from PDF
                 # print('\nExtract text from PDF...')
-                res_name = '/home/luciano/Documents/unr/fceia/lcc/tesina/ing-legal/repos/vinci/ext_data/normatives/municipal/san-lorenzo/datasets/pdf/' + response.meta['link'].rsplit('/', 2)[-2] + '.pdf'
+                res_name = os.getenv('NORMATIVES_MUNICIPAL_PATH') + 'datasets/pdf/' + response.meta['link'].rsplit('/', 2)[-2] + '.pdf'
                 # print('res_name', res_name)
                 pdf_name = pdf_link.extract_first()
                 pdf_name = iri_to_uri(pdf_name)

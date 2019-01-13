@@ -1,10 +1,11 @@
 import pymongo
 import settings
+import os
 
 class DB():
 	def __init__(self):
-		self.client = pymongo.MongoClient(settings.DB_SERVER, int(settings.DB_PORT))  # Connect to client
-		self.db = self.client[settings.DB_NAME]
+		self.client = pymongo.MongoClient(os.getenv('DB_SERVER'), int(os.getenv('DB_PORT')))  # Connect to client
+		self.db = self.client[os.getenv('DB_NAME')]
 
 	def close(self):
 		self.client.close()

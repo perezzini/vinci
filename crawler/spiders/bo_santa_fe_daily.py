@@ -4,10 +4,9 @@ from bs4 import BeautifulSoup
 from crawler.items import Norm
 import utils
 from bson.objectid import ObjectId
-
 from datetime import date
-
 import re
+import os
 
 class BOSantaFeDaily(scrapy.Spider):
 	name = 'bo_santa_fe_daily'
@@ -26,7 +25,7 @@ class BOSantaFeDaily(scrapy.Spider):
                 """  # TODO: must better understand this...
 
 	def start_requests(self):
-		url = 'https://www.santafe.gob.ar/boletinoficial/resumendia.php?pdia=ultimo&dia=' + date.today().strftime('%Y-%m-%d')
+		url = os.getenv('BO_PROVINCIAL') + 'resumendia.php?pdia=ultimo&dia=' + date.today().strftime('%Y-%m-%d')
 		yield SplashRequest(url=url,
 							callback=self.parse,
 							endpoint='execute',

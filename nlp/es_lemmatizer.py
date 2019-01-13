@@ -1,10 +1,11 @@
 import pandas as pd
 from unidecode import unidecode
 import settings
+import os
 
 class ESLemmatizer():
     def __init__(self):
-        self.dict = pd.read_csv(settings.ES_LEMMAS_PATH, delim_whitespace=True)
+        self.dict = pd.read_csv(os.getenv('ES_LEMMAS_PATH'), delim_whitespace=True)
         self.dict = self.dict.set_index('key')['value'].to_dict()
 
     def word_exists(self, word):

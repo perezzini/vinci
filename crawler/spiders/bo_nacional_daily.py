@@ -3,7 +3,7 @@ from scrapy_splash import SplashRequest
 from bs4 import BeautifulSoup
 from crawler.items import Norm
 from bson.objectid import ObjectId
-
+import os
 from datetime import date
 
 class BONacionalDaily(scrapy.Spider):
@@ -23,7 +23,7 @@ class BONacionalDaily(scrapy.Spider):
 				"""  # TODO: must better understand this. Note that splash.private_mode_enabled = true
 
 	def start_requests(self):
-		url = 'https://www.boletinoficial.gob.ar/'
+		url = os.getenv('BO_NACIONAL')
 		yield SplashRequest(url=url,
 							callback=self.parse,
 							endpoint='execute',
