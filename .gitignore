@@ -116,3 +116,6 @@ ext_data/
 
 # Software notes
 SOFT-NOTES.md
+
+# Tests
+tests/
