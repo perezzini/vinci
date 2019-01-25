@@ -16,7 +16,7 @@ class BOSantaFeDaily(scrapy.Spider):
                   splash.private_mode_enabled = true
                   local url = splash.args.url
                   assert(splash:go(url))
-                  assert(splash:wait(1))
+                  assert(splash:wait(5))
                   return {
                     html = splash:html(),
                     har = splash:har(),
