@@ -25,5 +25,6 @@ pandas = "*"
 textract = "*"
 "beautifulsoup4" = "*"
 python-dateutil = "*"
+scikit-learn = "*"
 
 [dev-packages]
