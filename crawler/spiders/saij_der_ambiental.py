@@ -44,7 +44,7 @@ class SaijDerAmbiental(scrapy.Spider):
     def parse(self, response):
         norm_urls = self.extract_with_css(response, 'ul.result-list li.result-item div.art-legis-colapsado dd.tit-colapsado a::attr(href)').extract()
         norm_urls = norm_urls[1:]
-        print('norm_urls', norm_urls)
+        # print('norm_urls', norm_urls)
 
         for url in norm_urls:
             url = response.urljoin(url)

@@ -31,7 +31,7 @@ class SaijDerLaboral(scrapy.Spider):
 
     def start_requests(self):
         # Derecho Laboral
-        url = 'http://www.saij.gob.ar/resultados.jsp?r=tema:derecho?laboral'
+        url = 'http://www.saij.gob.ar/resultados.jsp?r=%20tema:derecho?laboral&b=avanzada&o=0&p=25&f=Total|Tipo%20de%20Documento/Legislaci%C3%B3n|Fecha|Organismo|Publicaci%C3%B3n|Tema|Estado%20de%20Vigencia|Autor|Jurisdicci%C3%B3n&v=colapsada'
         yield SplashRequest(
             url=url,
             callback=self.parse,
@@ -44,7 +44,7 @@ class SaijDerLaboral(scrapy.Spider):
     def parse(self, response):
         norm_urls = self.extract_with_css(response, 'ul.result-list li.result-item div.art-legis-colapsado dd.tit-colapsado a::attr(href)').extract()
         norm_urls = norm_urls[1:]
-        print('norm_urls', norm_urls)
+        # print('norm_urls', norm_urls)
 
         for url in norm_urls:
             url = response.urljoin(url)
@@ -86,6 +86,6 @@ class SaijDerLaboral(scrapy.Spider):
                 'text': full_text,
                 'abstract': abstract,
                 'link': response.meta['link'],
-                'html': response.text
+                # 'html': response.text
             }
         )
