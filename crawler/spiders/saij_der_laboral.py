@@ -86,6 +86,6 @@ class SaijDerLaboral(scrapy.Spider):
                 'text': full_text,
                 'abstract': abstract,
                 'link': response.meta['link'],
-                # 'html': response.text
+                'html': response.text
             }
         )
