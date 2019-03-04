@@ -9,9 +9,9 @@ def create(collection, proc=None):
     pre = Preprocess()
     return corpora.Dictionary(pre.process(text, proc=proc) for text in collection)
 
-def filter_once_ids(dict):
-    once_ids = [tokenid for tokenid, docfreq in iteritems(dict.dfs) if docfreq == 1]
-    dict.filter_tokens(bad_ids=once_ids)
+def filter_ids_with_freq(dict, freqs):
+    ids = [tokenid for tokenid, docfreq in iteritems(dict.dfs) if docfreq in freqs]
+    dict.filter_tokens(bad_ids=ids)
 
 def get_id_from_token(dict, token):
     try:
@@ -45,6 +45,9 @@ def filter_bad_tokens(dict, least_freq, most_freq):
 def extend(dict, collection, proc=None):
     pre = Preprocess()
     dict.add_documents(pre.process(text, proc=proc) for text in collection)
+
+def get_num_of_features(dict):
+    return len(dict.dfs)
 
 def stats(dict, freq=20):
     print('Number of documents processed:', dict.num_docs)
