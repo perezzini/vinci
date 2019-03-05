@@ -1,6 +1,7 @@
 from nlp.preprocess import Preprocess
 from gensim import corpora
 import os
+from gensim import matutils
 
 def create(collection, dict, preprocess=None):
     """
@@ -34,7 +35,7 @@ def get_num_docs(corpus):
     """
     return corpus.num_docs
 
-def get_num_terms(corpus):
+def get_num_features(corpus):
     """
     Argument is in Matrix Market format
     """
@@ -45,3 +46,12 @@ def stats(corpus):
     Argument is in Matrix Market format
     """
     print(corpus)
+
+def to_array(corpus, sparse=True):
+    """
+    Converts corpus into a Scipy sparse matrix or a Numpy dense matrix
+    """
+    if sparse:
+        return matutils.corpus2csc(corpus, num_terms=get_num_features(corpus))
+    else:
+        return matutils.corpus2dense(corpus, num_terms=get_num_features(corpus))
