@@ -4,7 +4,7 @@ from nlp.dicttools import get_num_of_features
 
 def to_bow(plain_text_doc, dict, preprocess=None, model=None):
     """
-    Convert plain-text doc into BoW format (list of pairs)
+    Convert plain-text doc into Gensim BoW format (list of (token_id, token_count))
     using, maybe, some transformation model
     """
     pre = Preprocess()
@@ -13,12 +13,15 @@ def to_bow(plain_text_doc, dict, preprocess=None, model=None):
     else:
         return dict.doc2bow(pre.process(plain_text_doc, proc=preprocess))
 
-def to_vec(bow, dict):
+def to_vec(bow, dict, sparse=True):
     """
-    Convert BoW doc in a more suitable form of a (sparse) vector
+    Converts BoW doc into a Scipy sparse or a Numpy dense vector
     """
     bow = [bow]  # place BoW doc in a "singleton" corpus
-    return matutils.corpus2csc(bow, num_terms=get_num_of_features(dict))
+    if sparse:
+        return matutils.corpus2csc(bow, num_terms=get_num_of_features(dict))
+    else:
+        return matutils.corpus2dense(bow, num_terms=get_num_of_features(dict))
 
 def get_top_terms(bow, dict, n):
     """
