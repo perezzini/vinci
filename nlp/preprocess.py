@@ -39,24 +39,42 @@ class Preprocess():
     def is_stopword(self, token):
         return token in self.stopwords
 
-    def get_word_lemma(self, word):
+    def proc(self, text):
         """
-        If no lemma is found, or the word itself
-        is a lemma, the word is returned as is
-        """
-        if self.word_exists(word):
-            return self.dict[word]
-        else:
-            return word
+        Preprocess of raw-text into a list of tokens.
 
-    def process(self, text, proc=None):
-        def property(token, min_len):
+        Notes: Currently supports two kinds of preprocessing
+            -   Lemmatization: given a word retrieves its lemma, if exists.
+                If word lemma does not exists, process checks if it's a real
+                word.
+            -   Stemming: process uses Snowball algorithm to get to the root of
+                a word. The root is not always a valid word in language's
+                vocabulary.
+        """
+        def predicate(token, min_len):
             return (
                 not self.is_stopword(token)
                 and not self.token_has_numbers(token)
                 and len(token) >= min_len
             )
-        if proc == 'lemmatization':
-            return (self.unidecode(self.get_word_lemma(token)) for token in self.word_tokenization(text) if property(token, 3))
+        if self.process == 'lemmatization':
+            lemmas = (self.get_word_lemma(token) for token in self.word_tokenization(text) if predicate(token, 3))
+            return (self.unidecode(lemma) for lemma in lemmas if self.word_exists(lemma))
         else:
-            return (self.unidecode(token) for token in self.word_tokenization(text) if property(token, 3))
+            if self.process == 'stemming':
+                stems = (self.stemmer.stem(token) for token in self.word_tokenization(text) if predicate(token, 3))
+                return (self.unidecode(stem) for stem in stems)
+            else:
+                return (self.unidecode(token) for token in self.word_tokenization(text))
+
+    def get_word_lemma(self, word):
+        """
+        If no lemma is found, or the word itself
+        is a lemma, the word is returned as it is
+        """
+        def lemma_exists(word):
+            return word in self.lemmas
+        if lemma_exists(word):
+            return self.lemmas[word]
+        else:
+            return word
