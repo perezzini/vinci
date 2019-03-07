@@ -1,13 +1,13 @@
 from gensim import corpora
-from nlp.preprocess import Preprocess
 from six import iteritems
 from itertools import islice
 import os
 from gensim.utils import SaveLoad
+from nltk.probability import FreqDist
+import matplotlib.pyplot as plt
 
-def create(collection, proc=None):
-    pre = Preprocess()
-    return corpora.Dictionary(pre.process(text, proc=proc) for text in collection)
+def create(collection, preproc):
+    return corpora.Dictionary(preproc.proc(text) for text in collection)
 
 def filter_ids_with_freq(dict, freqs):
     ids = [tokenid for tokenid, docfreq in iteritems(dict.dfs) if docfreq in freqs]
@@ -42,14 +42,15 @@ def filter_bad_tokens(dict, least_freq, most_freq):
     most_ids = list(map(lambda pair: pair[0], get_n_freq_tokens(dict, most_freq)))
     dict.filter_tokens(bad_ids=least_ids + most_ids)
 
-def extend(dict, collection, proc=None):
-    pre = Preprocess()
-    dict.add_documents(pre.process(text, proc=proc) for text in collection)
+def extend(dict, collection, preproc):
+    dict.add_documents(preproc.process(text) for text in collection)
 
 def get_num_of_features(dict):
     return len(dict.dfs)
 
 def stats(dict, freq=20):
+    print(dict)
+    print('\n')
     print('Number of documents processed:', dict.num_docs)
     print('\n')
     print('Number of processed words:', dict.num_pos)

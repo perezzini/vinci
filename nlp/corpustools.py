@@ -1,16 +1,14 @@
-from nlp.preprocess import Preprocess
 from gensim import corpora
 import os
 from gensim import matutils
 
-def create(collection, dict, preprocess=None):
+def create(collection, dict, preproc):
     """
     Create BoW corpus of documents collection in a streaming-way
     """
-    def preprocess_collection(collection, proc):
-        pre = Preprocess()
-        return (pre.process(doc, proc=proc) for doc in collection)
-    return (dict.doc2bow(doc) for doc in preprocess_collection(collection, preprocess))
+    def preprocess_collection(collection):
+        return (preproc.proc(doc) for doc in collection)
+    return (dict.doc2bow(doc) for doc in preprocess_collection(collection))
 
 def save(corpus, name):
     """
@@ -18,8 +16,8 @@ def save(corpus, name):
     """
     corpora.MmCorpus.serialize(os.getenv('MODELS_PATH') + '/' + name + '.mm', corpus)
 
-def create_and_save(collection, dict, name, preprocess=None):
-    corpus = create(collection, dict, preprocess=preprocess)
+def create_and_save(collection, dict, name, preproc):
+    corpus = create(collection, dict, preproc)
     save(corpus, name)
     return corpus
 
