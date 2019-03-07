@@ -67,3 +67,8 @@ def load(name):
     except Exception as e:
         print(e)
         print('Dictionary not found')
+
+def plot_freq_dist(dict, firsts=100, cumulative=False):
+    dist = FreqDist(dict.dfs)
+    dist.plot(firsts, cumulative=cumulative)
+    plt.show()
