@@ -1,20 +1,25 @@
 from nltk.corpus import stopwords
 from nltk.tokenize import RegexpTokenizer
 from nltk import sent_tokenize
+from nltk.stem.snowball import SpanishStemmer
 import re
 from unidecode import unidecode
 import pandas as pd
 import os
 
 class Preprocess():
-    def __init__(self):
-        self.stopwords = set(stopwords.words('spanish'))
-        self.dict = pd.read_csv(os.getenv('ES_LEMMAS_PATH'), delim_whitespace=True)
-        self.dict = self.dict.set_index('key')['value'].to_dict()
+    def __init__(self, process=None):
+        self.stopwords = stopwords.words('spanish')  # list of stopwords
+        self.voc = pd.read_csv(os.getenv('ES_VOC_PATH'))
+        self.voc = self.voc.set_index('word')['index'].to_dict()  # spanish vocabulary (type: dict)
+        self.lemmas = pd.read_csv(os.getenv('ES_LEMMAS_PATH'), delim_whitespace=True)
+        self.lemmas = self.lemmas.set_index('key')['value'].to_dict()  # spanish lemmas (type: dict)
         self.tokenizer = RegexpTokenizer(r'\w+')
+        self.process = process
+        self.stemmer = SpanishStemmer(ignore_stopwords=False)
 
     def word_exists(self, word):
-        return word in self.dict
+        return word in self.voc
 
     def token_has_numbers(self, token):
     	return bool(re.search(r'\d', token))
