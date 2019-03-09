@@ -11,18 +11,31 @@ def to_bow(plain_text_doc, dict, preproc, model=None):
     else:
         return dict.doc2bow(preproc.proc(plain_text_doc))
 
-def to_vec(bow, dict, sparse=True):
+def is_bow(vec):
     """
-    Converts BoW doc into a Scipy sparse or a Numpy dense vector
+    Checks if a vector is in the sparse Gensim BoW format
     """
-    bow = [bow]  # place BoW doc in a "singleton" corpus
-    if sparse:
-        return matutils.corpus2csc(bow, num_terms=get_num_of_features(dict))
-    else:
-        return matutils.corpus2dense(bow, num_terms=get_num_of_features(dict))
+    return matutils.isbow(vec)
 
-def get_top_terms(bow, dict, n):
+def to_dense_vec(bow, dict):
     """
-    Get top-weighted terms from a doc (in a certain weight representation)
+    Converts a document in Gensim BoW format into a dense numpy array
     """
-    return list(map(lambda pair: ((dict[pair[0]], pair[0]), pair[1]), sorted(bow, key=lambda pair: pair[1], reverse=True)[:n]))
+    return matutils.sparse2full(bow, get_num_of_features(dict))
+
+def from_dense_vec(vec):
+    """
+    Converts a vector into Gensim BoW format
+    """
+    return matutils.any2sparse(vec)
+
+def get_top_terms(vec, dict, n):
+    """
+    Returns the top N elements of the greatest magnitude (abs) of
+    a doc vector (in Gensim BoW or dense numpy array)
+    """
+    if not(is_bow(vec)):
+        top = matutils.full2sparse_clipped(vec, n)
+        return list(map(lambda pair: ((dict[pair[0]], pair[0]), pair[1]), top))
+    else:
+        return list(map(lambda pair: ((dict[pair[0]], pair[0]), pair[1]), sorted(vec, key=lambda: pair[1], reverse=True)[:n]))
