@@ -8,8 +8,9 @@ import pandas as pd
 import os
 
 class Preprocess():
-    def __init__(self, process=None):
-        self.stopwords = stopwords.words('spanish')  # list of stopwords
+    def __init__(self, process=None, token_min_len=None):
+        self.stopwords = pd.read_csv(os.getenv('ES_STOPWORDS_PATH'))  # list of stopwords
+        self.stopwords = self.stopwords.set_index('word')['index'].to_dict()
         self.voc = pd.read_csv(os.getenv('ES_VOC_PATH'))
         self.voc = self.voc.set_index('word')['index'].to_dict()  # spanish vocabulary (type: dict)
         self.lemmas = pd.read_csv(os.getenv('ES_LEMMAS_PATH'), delim_whitespace=True)
@@ -17,6 +18,10 @@ class Preprocess():
         self.tokenizer = RegexpTokenizer(r'\w+')
         self.process = process
         self.stemmer = SpanishStemmer(ignore_stopwords=False)
+        if token_min_len:
+            self.token_min_len = token_min_len
+        else:
+            self.token_min_len = 4
 
     def word_exists(self, word):
         return word in self.voc
