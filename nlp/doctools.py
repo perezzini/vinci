@@ -38,4 +38,4 @@ def get_top_terms(vec, dict, n):
         top = matutils.full2sparse_clipped(vec, n)
         return list(map(lambda pair: ((dict[pair[0]], pair[0]), pair[1]), top))
     else:
-        return list(map(lambda pair: ((dict[pair[0]], pair[0]), pair[1]), sorted(vec, key=lambda: pair[1], reverse=True)[:n]))
+        return list(map(lambda pair: ((dict[pair[0]], pair[0]), pair[1]), sorted(vec, key=lambda pair: pair[1], reverse=True)[:n]))
