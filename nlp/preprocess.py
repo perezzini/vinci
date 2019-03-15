@@ -56,21 +56,24 @@ class Preprocess():
                 a word. The root is not always a valid word in language's
                 vocabulary.
         """
-        def predicate(token, min_len):
+        def predicate(token):
             return (
-                not self.is_stopword(token)
-                and not self.token_has_numbers(token)
-                and len(token) >= min_len
+                len(token) >= self.token_min_len
+                and (not self.is_stopword(token))
+                and (not self.token_has_numbers(token))
             )
         if self.process == 'lemmatization':
-            lemmas = (self.get_word_lemma(token) for token in self.word_tokenization(text) if predicate(token, 3))
+            lemmas = (self.get_word_lemma(token) for token in self.word_tokenization(text) if predicate(token))
             return (self.unidecode(lemma) for lemma in lemmas if self.word_exists(lemma))
         else:
             if self.process == 'stemming':
-                stems = (self.stemmer.stem(token) for token in self.word_tokenization(text) if predicate(token, 3))
+                stems = (self.stemmer.stem(token) for token in self.word_tokenization(text) if predicate(token))
                 return (self.unidecode(stem) for stem in stems)
             else:
-                return (self.unidecode(token) for token in self.word_tokenization(text))
+                if self.process == 'basic':
+                    return (self.unidecode(token) for token in self.word_tokenization(text) if predicate(token) and self.word_exists(token))
+                else:
+                    return (self.unidecode(token) for token in self.word_tokenization(text))
 
     def get_word_lemma(self, word):
         """
