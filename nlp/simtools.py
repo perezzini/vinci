@@ -3,6 +3,7 @@ import os
 from heapq import nlargest
 from gensim import matutils
 from nlp.corpustools import get_num_features
+import linalg as lg
 
 def create_index(model, corpus):
     """
@@ -22,6 +23,8 @@ def query_index(q, index):
     Given a query (doc) and an index of documents (cosine-sim-ready),
     computes the cosine similarity between the query and every single
     doc in the index (searches documents similar to query in index)
+
+    Note: q must be represented in the model used to create the index
     """
     return index[q]
 
@@ -36,7 +39,11 @@ def get_most_sim_doc_ids(q, n, index):
 
 def cos_sim(vec1, vec2):
     """
-    Computes cosine similarity between two document vectors (represented
-    in any VSM)
+    Computes cosine similarity between two document vectors
+
+    Notes: input vectors can be numpy.ndarray,
+    scipy.sparse or Gensim BoW
     """
-    return matutils.cossim(vec1, vec2)
+    versor1 = lg.to_unit(vec1)
+    versor2 = lg.to_unit(vec2)
+    return lg.dot(versor1, versor2)
