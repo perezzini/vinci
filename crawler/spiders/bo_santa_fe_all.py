@@ -5,10 +5,12 @@ from crawler.items import Norm
 from bson.objectid import ObjectId
 
 from datetime import date
-import utils
+import utils.misc as utils
 
 class BOSantaFeAll(scrapy.Spider):
 	name = 'bo_santa_fe_all'
+
+	db_name = 'bo_santa_fe_all'
 
 	lua_script = """
                 function main(splash)

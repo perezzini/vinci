@@ -2,7 +2,7 @@ import scrapy
 from scrapy_splash import SplashRequest
 from bs4 import BeautifulSoup
 from crawler.items import Norm
-import utils
+import utils.misc
 from bson.objectid import ObjectId
 from datetime import date
 import re
@@ -10,6 +10,8 @@ import os
 
 class BOSantaFeDaily(scrapy.Spider):
 	name = 'bo_santa_fe_daily'
+
+	db_name = 'bo_santa_fe_daily'
 
 	lua_script = """
                 function main(splash)
