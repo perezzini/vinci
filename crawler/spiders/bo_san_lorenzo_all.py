@@ -6,12 +6,14 @@ from bson.objectid import ObjectId
 from datetime import date
 import textract
 import urllib
-from utils import iri_to_uri
+from utils.misc import iri_to_uri
 import time
 import sys
 
 class BOSanLorenzoAll(scrapy.Spider):
     name = 'bo_san_lorenzo_all'
+
+    db_name = 'bo_san_lorenzo_all'
 
     lua_script = """
                 function main(splash)

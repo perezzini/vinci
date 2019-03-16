@@ -1,31 +1,32 @@
 from gensim import corpora
-from nlp.preprocess import Preprocess
 from six import iteritems
 from itertools import islice
 import os
 from gensim.utils import SaveLoad
+from nltk.probability import FreqDist
+import matplotlib.pyplot as plt
 
-def create(collection, proc=None):
-    pre = Preprocess()
-    return corpora.Dictionary(pre.process(text, proc=proc) for text in collection)
+def create(collection, preproc):
+    return corpora.Dictionary(preproc.proc(text) for text in collection)
 
-def filter_once_ids(dict):
-    once_ids = [tokenid for tokenid, docfreq in iteritems(dict.dfs) if docfreq == 1]
-    dict.filter_tokens(bad_ids=once_ids)
+def word_exists(dict, word):
+    return word in dict.itervalues()
+
+def filter_ids_with_freq(dict, freqs):
+    ids = [tokenid for tokenid, docfreq in iteritems(dict.dfs) if docfreq in freqs]
+    dict.filter_tokens(bad_ids=ids)
 
 def get_id_from_token(dict, token):
     try:
         return dict.token2id[token]
     except Exception as e:
         print(e)
-        print('Token not found in dictionary')
 
 def get_token_from_id(dict, id):
     try:
         return dict.id2token[id]
     except Exception as e:
         print(e)
-        print('ID not found in dictionary')
 
 def get_freq(dict, id):
     return dict.dfs[id]
@@ -42,11 +43,30 @@ def filter_bad_tokens(dict, least_freq, most_freq):
     most_ids = list(map(lambda pair: pair[0], get_n_freq_tokens(dict, most_freq)))
     dict.filter_tokens(bad_ids=least_ids + most_ids)
 
-def extend(dict, collection, proc=None):
-    pre = Preprocess()
-    dict.add_documents(pre.process(text, proc=proc) for text in collection)
+def add_token(dict, token, preproc):
+    """
+    Extends vocabulary with given token
+
+    Notes: token is preprocessed on-the-fy
+    """
+    token = list(pre.proc(token))
+    dict.add_documents([token])
+
+def add_documents(dict, preprocessed_collection):
+    """
+    Update dictionary from a collection of documents
+
+    Notes: input collection must be an iterator (iterable of iterable)
+    of preprocessed documents
+    """
+    return dict.add_documents(preprocessed_collection)
+
+def get_num_of_features(dict):
+    return len(dict.dfs)
 
 def stats(dict, freq=20):
+    print(dict)
+    print('\n')
     print('Number of documents processed:', dict.num_docs)
     print('\n')
     print('Number of processed words:', dict.num_pos)
@@ -63,4 +83,8 @@ def load(name):
         return SaveLoad.load(os.getenv('DICTS_PATH') + '/' + name + '.dict')
     except Exception as e:
         print(e)
-        print('Dictionary not found')
+
+def plot_freq_dist(dict, firsts=100, cumulative=False):
+    dist = FreqDist(dict.dfs)
+    dist.plot(firsts, cumulative=cumulative)
+    plt.show()

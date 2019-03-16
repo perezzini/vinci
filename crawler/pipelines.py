@@ -11,7 +11,7 @@ class DBPipeline(object):
 
 	def open_spider(self, spider):
 		self.mongo_client = DB()
-		self.collection_name = spider.name
+		self.collection_name = spider.db_name
 
 	def close_spider(self, spider):
 		self.mongo_client.close()

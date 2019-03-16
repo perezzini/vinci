@@ -6,12 +6,14 @@ from bson.objectid import ObjectId
 from datetime import date
 import textract
 import urllib
-from utils import iri_to_uri
+from utils.misc import iri_to_uri
 import time
 import sys
 
 class SaijDerAmbiental(scrapy.Spider):
     name = 'saij_der_ambiental'
+
+    db_name = 'saij_der_ambiental'
 
     lua_script = """
                 function main(splash)

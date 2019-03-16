@@ -10,10 +10,8 @@ from utils.misc import iri_to_uri
 import time
 import sys
 
-class SaijDerLaboral(scrapy.Spider):
-    name = 'saij_der_laboral'
-
-    db_name = 'saij_der_laboral'
+class Derecho(scrapy.Spider):
+    name = 'derecho'
 
     lua_script = """
                 function main(splash)
@@ -28,12 +26,22 @@ class SaijDerLaboral(scrapy.Spider):
                 end
                 """
 
+    def __init__(self, *args, **kwargs):
+        super(Derecho, self).__init__(*args, **kwargs)
+        self.derecho = kwargs.get('derecho', '')
+        self.num_pages = kwargs.get('num_pages', '')
+        self.db_name = self.derecho.replace(' ', '_')
+
     def extract_with_css(self, response, query):
         return response.css(query)
 
     def start_requests(self):
-        # Derecho Laboral
-        url = 'http://www.saij.gob.ar/resultados.jsp?r=%20tema:derecho?laboral&b=avanzada&o=0&p=25&f=Total|Tipo%20de%20Documento/Legislaci%C3%B3n|Fecha|Organismo|Publicaci%C3%B3n|Tema|Estado%20de%20Vigencia|Autor|Jurisdicci%C3%B3n&v=colapsada'
+        def create_start_url():
+            root = 'http://www.saij.gob.ar/resultados.jsp?r=tema:'
+            concept = self.derecho.replace(' ', '?')
+            return root + concept + '&p=' + self.num_pages
+
+        url = create_start_url()
         yield SplashRequest(
             url=url,
             callback=self.parse,
@@ -46,7 +54,6 @@ class SaijDerLaboral(scrapy.Spider):
     def parse(self, response):
         norm_urls = self.extract_with_css(response, 'ul.result-list li.result-item div.art-legis-colapsado dd.tit-colapsado a::attr(href)').extract()
         norm_urls = norm_urls[1:]
-        # print('norm_urls', norm_urls)
 
         for url in norm_urls:
             url = response.urljoin(url)
@@ -59,20 +66,6 @@ class SaijDerLaboral(scrapy.Spider):
                 },
                 meta={
                     'link': url
-                }
-            )
-
-        # follow pagination
-        next_page_url = self.extract_with_css(response, 'div.page_navigation a#paginador-boton-siguiente::attr(href)').extract_first()
-        if next_page_url:
-            next_page_url = response.urljoin(next_page_url)
-            # print('===== NEXT =====', next_page_url)
-            yield SplashRequest(
-                url=next_page_url,
-                callback=self.parse,
-                endpoint='execute',
-                args={
-                    'lua_source': self.lua_script
                 }
             )
 
