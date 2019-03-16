@@ -9,6 +9,9 @@ import matplotlib.pyplot as plt
 def create(collection, preproc):
     return corpora.Dictionary(preproc.proc(text) for text in collection)
 
+def word_exists(dict, word):
+    return word in dict.itervalues()
+
 def filter_ids_with_freq(dict, freqs):
     ids = [tokenid for tokenid, docfreq in iteritems(dict.dfs) if docfreq in freqs]
     dict.filter_tokens(bad_ids=ids)
@@ -18,14 +21,12 @@ def get_id_from_token(dict, token):
         return dict.token2id[token]
     except Exception as e:
         print(e)
-        print('Token not found in dictionary')
 
 def get_token_from_id(dict, id):
     try:
         return dict.id2token[id]
     except Exception as e:
         print(e)
-        print('ID not found in dictionary')
 
 def get_freq(dict, id):
     return dict.dfs[id]
@@ -42,8 +43,23 @@ def filter_bad_tokens(dict, least_freq, most_freq):
     most_ids = list(map(lambda pair: pair[0], get_n_freq_tokens(dict, most_freq)))
     dict.filter_tokens(bad_ids=least_ids + most_ids)
 
-def extend(dict, collection, preproc):
-    dict.add_documents(preproc.process(text) for text in collection)
+def add_token(dict, token, preproc):
+    """
+    Extends vocabulary with given token
+
+    Notes: token is preprocessed on-the-fy
+    """
+    token = list(pre.proc(token))
+    dict.add_documents([token])
+
+def add_documents(dict, preprocessed_collection):
+    """
+    Update dictionary from a collection of documents
+
+    Notes: input collection must be an iterator (iterable of iterable)
+    of preprocessed documents
+    """
+    return dict.add_documents(preprocessed_collection)
 
 def get_num_of_features(dict):
     return len(dict.dfs)
@@ -67,7 +83,6 @@ def load(name):
         return SaveLoad.load(os.getenv('DICTS_PATH') + '/' + name + '.dict')
     except Exception as e:
         print(e)
-        print('Dictionary not found')
 
 def plot_freq_dist(dict, firsts=100, cumulative=False):
     dist = FreqDist(dict.dfs)
