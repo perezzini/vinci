@@ -9,6 +9,8 @@ from datetime import date
 class BONacionalDaily(scrapy.Spider):
 	name = 'bo_nacional_daily'
 
+	db_name = 'bo_nacional_daily'
+
 	lua_script = """
 				function main(splash)
 				  splash.private_mode_enabled = true
