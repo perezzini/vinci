@@ -26,5 +26,7 @@ textract = "*"
 "beautifulsoup4" = "*"
 python-dateutil = "*"
 scikit-learn = "*"
+joblib = "*"
+yellowbrick = "*"
 
 [dev-packages]
