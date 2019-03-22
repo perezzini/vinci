@@ -18,7 +18,7 @@ class Derecho(scrapy.Spider):
                   splash.private_mode_enabled = false
                   local url = splash.args.url
                   assert(splash:go(url))
-                  assert(splash:wait(1))
+                  assert(splash:wait(0.5))
                   return {
                     html = splash:html(),
                     har = splash:har(),
@@ -39,7 +39,7 @@ class Derecho(scrapy.Spider):
         def create_start_url():
             root = 'http://www.saij.gob.ar/resultados.jsp?r=tema:'
             concept = self.derecho.replace(' ', '?')
-            return root + concept + '&p=' + self.num_pages
+            return root + concept + '&b=avanzada&o=0&p=' + self.num_pages + '&f=Total|Tipo%20de%20Documento/Legislación|Fecha|Organismo|Publicación|Tema|Estado%20de%20Vigencia|Autor|Jurisdicción&v=colapsada'
 
         url = create_start_url()
         yield SplashRequest(
