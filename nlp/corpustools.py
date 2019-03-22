@@ -14,7 +14,7 @@ def save(corpus, name):
     """
     Serialize corpus in the Matrix Market format
     """
-    corpora.MmCorpus.serialize(os.getenv('MODELS_PATH') + '/' + name + '.mm', corpus)
+    corpora.MmCorpus.serialize(os.getenv('CORPUSES_PATH') + '/' + name + '.mm', corpus)
 
 def create_and_save(collection, dict, name, preproc):
     corpus = create(collection, dict, preproc)
@@ -25,7 +25,7 @@ def load(name):
     """
     Load a corpus iterator from a Matrix Market file
     """
-    return corpora.MmCorpus(os.getenv('MODELS_PATH') + '/' + name + '.mm')
+    return corpora.MmCorpus(os.getenv('CORPUSES_PATH') + '/' + name + '.mm')
 
 def get_num_docs(corpus):
     """
