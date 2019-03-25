@@ -67,7 +67,7 @@ class Preprocess():
             return (self.unidecode(lemma) for lemma in lemmas if self.word_exists(lemma))
         else:
             if self.process == 'stemming':
-                stems = (self.stemmer.stem(token) for token in self.word_tokenization(text) if predicate(token))
+                stems = (self.stemmer.stem(token) for token in self.word_tokenization(text) if predicate(token) and self.word_exists(token))
                 return (self.unidecode(stem) for stem in stems)
             else:
                 if self.process == 'basic':
