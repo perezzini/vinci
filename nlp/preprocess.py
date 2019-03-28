@@ -6,6 +6,7 @@ import re
 from unidecode import unidecode
 import pandas as pd
 import os
+from gensim.utils import SaveLoad
 
 class Preprocess():
     def __init__(self, process=None, token_min_len=None):
