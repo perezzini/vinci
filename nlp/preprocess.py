@@ -23,6 +23,9 @@ class Preprocess():
         else:
             self.token_min_len = 4
 
+    def set_collocations_model(self, name):
+        self.collocations_model = SaveLoad.load(os.getenv('COLLOCATIONS_PATH') + name)
+
     def word_exists(self, word):
         return word in self.voc
 
