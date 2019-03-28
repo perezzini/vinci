@@ -7,7 +7,10 @@ def create(collection, dict, preproc):
     Create BoW corpus of documents collection in a streaming-way
     """
     def preprocess_collection(collection):
-        return (preproc.proc(doc) for doc in collection)
+        try:
+            return (preproc.collocations_model[preproc.proc(doc)] for doc in collection)
+        except AttributeError:
+            return (preproc.proc(doc) for doc in collection)
     return (dict.doc2bow(doc) for doc in preprocess_collection(collection))
 
 def save(corpus, name):
