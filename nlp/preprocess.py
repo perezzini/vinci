@@ -64,16 +64,16 @@ class Preprocess():
             )
         if self.process == 'lemmatization':
             lemmas = (self.get_word_lemma(token) for token in self.word_tokenization(text) if predicate(token))
-            return (self.unidecode(lemma) for lemma in lemmas if self.word_exists(lemma))
+            return [self.unidecode(lemma) for lemma in lemmas if self.word_exists(lemma)]
         else:
             if self.process == 'stemming':
                 stems = (self.stemmer.stem(token) for token in self.word_tokenization(text) if predicate(token) and self.word_exists(token))
-                return (self.unidecode(stem) for stem in stems)
+                return [self.unidecode(stem) for stem in stems]
             else:
                 if self.process == 'basic':
-                    return (self.unidecode(token) for token in self.word_tokenization(text) if predicate(token) and self.word_exists(token))
+                    return [self.unidecode(token) for token in self.word_tokenization(text) if predicate(token) and self.word_exists(token)]
                 else:
-                    return (self.unidecode(token) for token in self.word_tokenization(text))
+                    return [self.unidecode(token) for token in self.word_tokenization(text)]
 
     def get_word_lemma(self, word):
         """
