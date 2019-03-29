@@ -9,16 +9,25 @@ import os
 from gensim.utils import SaveLoad
 
 class Preprocess():
-    def __init__(self, process=None, token_min_len=None):
-        self.stopwords = pd.read_csv(os.getenv('ES_STOPWORDS_PATH'))  # list of stopwords
-        self.stopwords = self.stopwords.set_index('word')['index'].to_dict()
-        self.voc = pd.read_csv(os.getenv('ES_VOC_PATH'))
-        self.voc = self.voc.set_index('word')['index'].to_dict()  # spanish vocabulary (type: dict)
-        self.lemmas = pd.read_csv(os.getenv('ES_LEMMAS_PATH'), delim_whitespace=True)
-        self.lemmas = self.lemmas.set_index('key')['value'].to_dict()  # spanish lemmas (type: dict)
-        self.tokenizer = RegexpTokenizer(r'\w+')
-        self.process = process
-        self.stemmer = SpanishStemmer(ignore_stopwords=False)
+    stopwords = pd.read_csv(os.getenv('ES_STOPWORDS_PATH'))  # list of stopwords
+    stopwords = stopwords.set_index('word')['index'].to_dict()
+    voc = pd.read_csv(os.getenv('ES_VOC_PATH'))
+    voc = voc.set_index('word')['index'].to_dict()  # spanish vocabulary (type: dict)
+    lemmas = pd.read_csv(os.getenv('ES_LEMMAS_PATH'), delim_whitespace=True)
+    lemmas = lemmas.set_index('key')['value'].to_dict()  # spanish lemmas (type: dict)
+    tokenizer = RegexpTokenizer(r'\w+')
+    stemmer = SpanishStemmer(ignore_stopwords=False)
+    preprocessors = [
+        'basic',
+        'stemming',
+        'lemmatization'
+    ]
+
+    def __init__(self, process='basic', token_min_len=None):
+        if process in self.preprocessors:
+            self.process = process
+        else:
+            raise Exception(process + 'not available')
         if token_min_len:
             self.token_min_len = token_min_len
         else:
@@ -59,6 +68,7 @@ class Preprocess():
             -   Stemming: process uses Snowball algorithm to get to the root of
                 a word. The root is not always a valid word in language's
                 vocabulary.
+            -   Basic: just apply word tokenization.
         """
         def predicate(token):
             return (
