@@ -1,15 +1,21 @@
 from gensim import matutils
 from nlp.dicttools import get_num_of_features
 
-def to_bow(plain_text_doc, dict, preproc, model=None):
+def to_bow(plain_text_doc, dict, preproc, model=None, collocations=True):
     """
     Convert plain-text doc into Gensim BoW format (list of (token_id, token_count))
     using, maybe, some transformation model
     """
     if model:
-        return model[dict.doc2bow(preproc.proc(plain_text_doc))]
+        try:
+            return model[dict.doc2bow(preproc.apply_collocations_model(preproc.proc(plain_text_doc)))]
+        except AttributeError:
+            return model[dict.doc2bow(preproc.proc(plain_text_doc))]
     else:
-        return dict.doc2bow(preproc.proc(plain_text_doc))
+        try:
+            return dict.doc2bow(preproc.apply_collocations_model(preproc.proc(plain_text_doc)))
+        except AttributeError:
+            return dict.doc2bow(preproc.proc(plain_text_doc))
 
 def is_bow(vec):
     """
