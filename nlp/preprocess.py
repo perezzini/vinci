@@ -90,3 +90,9 @@ class Preprocess():
             return self.lemmas[word]
         else:
             return word
+
+    def apply_collocations_model(self, preproc_doc):
+        """
+        Apply collocations model to preprocessed document
+        """
+        return self.collocations_model[preproc_doc]
