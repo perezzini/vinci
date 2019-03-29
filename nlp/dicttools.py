@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 def create(collection, preproc):
     collection_preproc = (preproc.proc(doc) for doc in collection)
     try:
-        return corpora.Dictionary(preproc.collocations_model[doc] for doc in collection_preproc)
+        return corpora.Dictionary(preproc.apply_collocations_model(doc) for doc in collection_preproc)
     except AttributeError:
         return corpora.Dictionary(collection_preproc)
 
