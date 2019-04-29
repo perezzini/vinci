@@ -16,13 +16,16 @@ class BONacionalDaily(scrapy.Spider):
 				  splash.private_mode_enabled = true
 				  local url = splash.args.url
 				  assert(splash:go(url))
-				  assert(splash:wait(5))
+				  assert(splash:wait(0.5))
 				  return {
 				    html = splash:html(),
 				    har = splash:har(),
 				  }
 				end
 				"""  # TODO: must better understand this. Note that splash.private_mode_enabled = true
+
+	def extract_with_css(self, response, query):
+		return response.css(query)
 
 	def start_requests(self):
 		url = os.getenv('BO_NACIONAL')
@@ -31,50 +34,46 @@ class BONacionalDaily(scrapy.Spider):
 							endpoint='execute',
 							args={
 									'lua_source': self.lua_script,
-								})
+								},
+							meta={
+								'date': date.today().strftime('%Y-%m-%d')
+							})
 
 	def parse(self, response):
-		norms = response.css('div#PorCadaNorma')
-		norm_items = norms.css('div.itemsection')
-		norm_urls = norm_items.css('h3 > a::attr(href)').extract()
+		norm_urls = response.css('div#avisosSeccionDiv a::attr(href)').extract()
 
-		for url in list(norm_urls):
-			url = response.urljoin(url)
-			yield SplashRequest(url=url,
-								callback=self.parse_details,
-								endpoint='execute',
-								args={
-									'lua_source': self.lua_script,
-								},
-								meta={
-									'link': url,
-								})
+		for url in norm_urls:
+			if 'anexo' not in url:
+				url = response.urljoin(url)
+				yield SplashRequest(url=url,
+									callback=self.parse_details,
+									endpoint='execute',
+									args={
+										'lua_source': self.lua_script,
+									},
+									meta={
+										'link': url,
+										'date': response.meta['date']
+									})
 
 	def parse_details(self, response):
-		def extract_with_css(query):
-			return response.css(query).extract_first()
+		full_text = self.extract_with_css(response, 'div.avisoContenido div#detalleAviso').extract_first()
+		full_text_soup = BeautifulSoup(full_text, 'html.parser')
 
-		full_text = extract_with_css('div.item')
-		soup = BeautifulSoup(full_text, 'html.parser')
+		title = self.extract_with_css(response, 'div.avisoContenido div#detalleAviso div#tituloDetalleAviso').extract_first()
+		title_soup = BeautifulSoup(title, 'html.parser')
 
-		if extract_with_css('p.aviso-norma::text'):
-			type = Norm.get_type_from_text(extract_with_css('p.aviso-norma::text'))
+
+		if self.extract_with_css(response, 'div.avisoContenido div#detalleAviso div#tituloDetalleAviso').extract_first():
+			simple_type = Norm.get_type_from_text(self.extract_with_css(response, 'div.avisoContenido div#detalleAviso div#tituloDetalleAviso').extract_first())
 		else:
-			type = None
-
-		if response.css('div#anexos a::attr(href)'):
-			annexes = list(map(lambda url: response.urljoin(url), response.css('div#anexos a::attr(href)').extract()))
-		else:
-			annexes = None
+			simple_type = None
 
 		yield Norm({
-			'published_at': date.today().strftime('%Y-%m-%d'),
-			'title': extract_with_css('p.aviso-titulo::text'),
-			'abstract': extract_with_css('p.aviso-sintesis::text'),
-			'text': soup.get_text(),
-			'type': dict(simple=type,
-						full=extract_with_css('p.aviso-norma::text')),
-			'annexes': annexes,
+			'published_at': response.meta['date'],
+			'title': title_soup.get_text(),
+			'text': full_text_soup.get_text(),
+			'type': dict(simple=simple_type),
 			'link': response.meta['link'],
 			'html': response.text
 		})
