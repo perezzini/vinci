@@ -28,5 +28,6 @@ python-dateutil = "*"
 scikit-learn = "*"
 joblib = "*"
 yellowbrick = "*"
+more-itertools = "*"
 
 [dev-packages]

@@ -7,7 +7,11 @@ from nltk.probability import FreqDist
 import matplotlib.pyplot as plt
 
 def create(collection, preproc):
-    return corpora.Dictionary(preproc.proc(text) for text in collection)
+    collection_preproc = (preproc.proc(doc) for doc in collection)
+    try:
+        return corpora.Dictionary(preproc.apply_collocations_model(doc) for doc in collection_preproc)
+    except AttributeError:
+        return corpora.Dictionary(collection_preproc)
 
 def word_exists(dict, word):
     return word in dict.itervalues()
