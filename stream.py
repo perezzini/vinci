@@ -1,5 +1,5 @@
 import pandas as pd
-import utils.itertools as it
+from more_itertools import nth
 
 class DF():
     def __init__(self, path, usecols=None):
@@ -10,7 +10,7 @@ class DF():
 
     def get_full_row(self, n, predicate=lambda _: True):
         rows = self.iter_rows(predicate=predicate)
-        return it.nth(rows(), n)
+        return nth(rows(), n)
 
     def get_rows_by_col_name(self, col_name, predicate=lambda _: True):
         rows = self.iter_rows(predicate=predicate)
