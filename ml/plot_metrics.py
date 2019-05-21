@@ -1,11 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.model_selection import learning_curve
+from sklearn.model_selection import validation_curve
 from sklearn.metrics import confusion_matrix
+from sklearn.metrics import roc_curve
 from sklearn.utils.multiclass import unique_labels
 
-def plot_learning_curves(estimator, title, X, y, ylim=None,
-                        cv=None, n_jobs=None, train_sizes=np.linspace(.1, 1.0, 5)):
+def plot_learning_curves(estimator, title, X, y, ylim=(0.0, 1.01),
+                        cv=None, n_jobs=None, train_sizes=np.linspace(.1, 1.0, 5), scoring='accuracy'):
     """
     Generate a simple plot of the test and training learning curve.
 
@@ -71,7 +73,8 @@ def plot_learning_curves(estimator, title, X, y, ylim=None,
         y,
         cv=cv,
         n_jobs=n_jobs,
-        train_sizes=train_sizes
+        train_sizes=train_sizes,
+        scoring=scoring
     )
     train_scores_mean = np.mean(train_scores, axis=1)
     train_scores_std = np.std(train_scores, axis=1)
@@ -145,3 +148,80 @@ def plot_cm(y_true, y_pred, classes=None,
                     color="white" if cm[i, j] > thresh else "black")
     fig.tight_layout()
     return ax
+
+def plot_val_curves(estimator,
+                    X,
+                    y,
+                    param_name,
+                    param_range,
+                    cv,
+                    title,
+                    xlabel,
+                    ylabel,
+                    scoring=None,
+                    ylim=(0.0, 1.1),
+                    n_jobs=1,
+                    verbose=0):
+    train_scores, test_scores = validation_curve(estimator=estimator,
+                                                X=X,
+                                                y=y,
+                                                param_name=param_name,
+                                                param_range=param_range,
+                                                cv=cv,
+                                                scoring=scoring,
+                                                n_jobs=n_jobs,
+                                                verbose=verbose)
+    train_scores_mean = np.mean(train_scores, axis=1)
+    train_scores_std = np.std(train_scores, axis=1)
+    test_scores_mean = np.mean(test_scores, axis=1)
+    test_scores_std = np.std(test_scores, axis=1)
+
+    plt.figure()
+    plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.ylim(0.0, 1.1)
+    lw = 2
+    plt.semilogx(param_range, train_scores_mean, label="Training score",
+                 color="darkorange", lw=lw)
+    plt.fill_between(param_range, train_scores_mean - train_scores_std,
+                     train_scores_mean + train_scores_std, alpha=0.2,
+                     color="darkorange", lw=lw)
+    plt.semilogx(param_range, test_scores_mean, label="Cross-validation score",
+                 color="navy", lw=lw)
+    plt.fill_between(param_range, test_scores_mean - test_scores_std,
+                     test_scores_mean + test_scores_std, alpha=0.2,
+                     color="navy", lw=lw)
+    plt.legend(loc="best")
+    return plt
+
+def plot_roc_curve(y_true, y_score, pos_label=None, sample_weight=None):
+    fpr, tpr, _ = roc_curve(y_true, y_score, pos_label=pos_label, sample_weight=sample_weight)
+
+    plt.figure()
+    plt.plot([0, 1], [0, 1], 'k--')
+    plt.plot(fpr, tpr)
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('1 - Specificity (False Positive Rate)')
+    plt.ylabel('Recall (True Positive Rate)')
+
+    return plt
+
+def plot_precision_recall_vs_threshold(precisions, recalls, thresholds):
+    plt.figure()
+    plt.plot(thresholds, precisions[:-1], "b--", label="Precision")
+    plt.plot(thresholds, recalls[:-1], "g-", label="Recall")
+    plt.xlabel("Threshold")
+    plt.legend(loc="center left")
+    plt.ylim([0, 1.1])
+    return plt
+
+def plot_precision_recall_curve(precisions, recalls):
+    plt.figure()
+    plt.plot(recalls, precisions)
+    plt.xlabel("Recall")
+    plt.ylabel("Precison")
+    plt.xlim([0, 1.1])
+    plt.ylim([0, 1.1])
+    return plt
