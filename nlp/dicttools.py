@@ -8,10 +8,7 @@ import matplotlib.pyplot as plt
 
 def create(collection, preproc):
     collection_preproc = (preproc.proc(doc) for doc in collection)
-    try:
-        return corpora.Dictionary(preproc.apply_collocations_model(doc) for doc in collection_preproc)
-    except AttributeError:
-        return corpora.Dictionary(collection_preproc)
+    return corpora.Dictionary(collection_preproc)
 
 def word_exists(dict, word):
     return word in dict.itervalues()
@@ -80,11 +77,11 @@ def stats(dict, freq=20):
     print('Least', freq, 'frequent tokens:', print_n_freq_tokens(dict, freq, most=False))
 
 def save(dict, name):
-    dict.save(os.getenv('DICTS_PATH') + '/' + name + '.dict')
+    dict.save(name)
 
 def load(name):
     try:
-        return SaveLoad.load(os.getenv('DICTS_PATH') + '/' + name + '.dict')
+        return SaveLoad.load(name)
     except Exception as e:
         print(e)
 
