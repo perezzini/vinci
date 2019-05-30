@@ -6,8 +6,43 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import roc_curve
 from sklearn.utils.multiclass import unique_labels
 
-def plot_learning_curves(estimator, title, X, y, ylim=(0.0, 1.01),
-                        cv=None, n_jobs=None, train_sizes=np.linspace(.1, 1.0, 5), scoring='accuracy'):
+def tn(y_true, y_pred): return confusion_matrix(y_true, y_pred)[0, 0]
+
+def fp(y_true, y_pred): return confusion_matrix(y_true, y_pred)[0, 1]
+
+def fn(y_true, y_pred): return confusion_matrix(y_true, y_pred)[1, 0]
+
+def tp(y_true, y_pred): return confusion_matrix(y_true, y_pred)[1, 1]
+
+def specificity(y_true, y_pred):
+    """
+    AKA True Negative Rate
+    """
+    tn = tn(y_true, y_pred)
+    fp = fp(y_true, y_pred)
+    return tn/(float(tn + fp))
+
+def fpr(y_true, y_pred):
+    fp = fp(y_true, y_pred)
+    tn = tn(y_true, y_pred)
+    return fp/(float(tn + fp))
+
+def tpr(y_true, y_pred):
+    """
+    AKA Recall or Sensitivity
+    """
+    return recall_score(y_pred=y_pred, y_true=y_true)
+
+def plot_learning_curves(estimator,
+                        title,
+                        X,
+                        y,
+                        ylim=(0.0, 1.01),
+                        cv=None,
+                        n_jobs=-1,
+                        train_sizes=np.linspace(.1, 1.0, 5),
+                        scoring='accuracy',
+                        verbose=1):
     """
     Generate a simple plot of the test and training learning curve.
 
@@ -74,7 +109,8 @@ def plot_learning_curves(estimator, title, X, y, ylim=(0.0, 1.01),
         cv=cv,
         n_jobs=n_jobs,
         train_sizes=train_sizes,
-        scoring=scoring
+        scoring=scoring,
+        verbose=verbose
     )
     train_scores_mean = np.mean(train_scores, axis=1)
     train_scores_std = np.std(train_scores, axis=1)
@@ -94,8 +130,11 @@ def plot_learning_curves(estimator, title, X, y, ylim=(0.0, 1.01),
     plt.legend(loc="best")
     return plt
 
-def plot_cm(y_true, y_pred, classes=None,
-            normalize=False, title=None,
+def plot_cm(y_true,
+            y_pred,
+            classes=None,
+            normalize=False,
+            title=None,
             cmap=plt.cm.Blues):
     """
     This function prints and plots the confusion matrix.
@@ -160,7 +199,7 @@ def plot_val_curves(estimator,
                     ylabel,
                     scoring=None,
                     ylim=(0.0, 1.1),
-                    n_jobs=1,
+                    n_jobs=-1,
                     verbose=0):
     train_scores, test_scores = validation_curve(estimator=estimator,
                                                 X=X,
@@ -195,26 +234,42 @@ def plot_val_curves(estimator,
     plt.legend(loc="best")
     return plt
 
-def plot_roc_curve(y_true, y_score, pos_label=None, sample_weight=None):
+def plot_roc_curve(y_true,
+                y_score,
+                pos_label=None,
+                sample_weight=None):
     fpr, tpr, _ = roc_curve(y_true, y_score, pos_label=pos_label, sample_weight=sample_weight)
 
     plt.figure()
-    plt.plot([0, 1], [0, 1], 'k--')
+    plt.title('Receiver Operating Characteristic')
     plt.plot(fpr, tpr)
-    plt.xlim([0.0, 1.0])
-    plt.ylim([0.0, 1.05])
-    plt.xlabel('1 - Specificity (False Positive Rate)')
-    plt.ylabel('Recall (True Positive Rate)')
+    plt.plot([0, 1], ls="--")
+    plt.plot([0, 0], [1, 0] , c=".7")
+    plt.plot([1, 1] , c=".7")
+    plt.ylabel('True Positive Rate')
+    plt.xlabel('False Positive Rate')
 
     return plt
 
-def plot_precision_recall_vs_threshold(precisions, recalls, thresholds):
+def eval_threshold(threshold,
+                    y_true,
+                    y_score):
+    fpr, tpr, thresholds = roc_curve(y_true, y_score)
+    print('Sensitivity:', tpr[thresholds > threshold][-1])
+    print('Specificity:', 1 - fpr[thresholds > threshold][-1])
+
+def plot_precision_recall_vs_threshold(precisions,
+                                    recalls,
+                                    thresholds,
+                                    actual_threshold=None):
     plt.figure()
     plt.plot(thresholds, precisions[:-1], "b--", label="Precision")
     plt.plot(thresholds, recalls[:-1], "g-", label="Recall")
-    plt.xlabel("Threshold")
+    plt.xlabel("Discrimination threshold")
     plt.legend(loc="center left")
-    plt.ylim([0, 1.1])
+    plt.ylim([0, 1.05])
+    if actual_threshold:
+        plt.axvline(x=actual_threshold)
     return plt
 
 def plot_precision_recall_curve(precisions, recalls):
@@ -222,6 +277,52 @@ def plot_precision_recall_curve(precisions, recalls):
     plt.plot(recalls, precisions)
     plt.xlabel("Recall")
     plt.ylabel("Precison")
-    plt.xlim([0, 1.1])
-    plt.ylim([0, 1.1])
+    plt.ylim([0.0, 1.05])
+    plt.xlim([0.0, 1.05])
+    return plt
+
+def plot_validation_curves(estimator,
+                            X,
+                            y,
+                            param_name,
+                            param_range,
+                            cv,
+                            scoring='accuracy',
+                            n_jobs=-1,
+                            verbose=1):
+    # Calculate accuracy on training and test set using range of parameter values
+    train_scores, test_scores = validation_curve(estimator=estimator,
+                                                 X=X,
+                                                 y=y,
+                                                 param_name=param_name,
+                                                 param_range=param_range,
+                                                 cv=cv,
+                                                 scoring=scoring,
+                                                 n_jobs=n_jobs,
+                                                 verbose=verbose)
+
+
+    # Calculate mean and standard deviation for training set scores
+    train_mean = np.mean(train_scores, axis=1)
+    train_std = np.std(train_scores, axis=1)
+
+    # Calculate mean and standard deviation for test set scores
+    test_mean = np.mean(test_scores, axis=1)
+    test_std = np.std(test_scores, axis=1)
+
+    # Plot mean accuracy scores for training and test sets
+    plt.plot(param_range, train_mean, label="Training score", color="black")
+    plt.plot(param_range, test_mean, label="Cross-validation score", color="dimgrey")
+
+    # Plot accurancy bands for training and test sets
+    plt.fill_between(param_range, train_mean - train_std, train_mean + train_std, color="gray")
+    plt.fill_between(param_range, test_mean - test_std, test_mean + test_std, color="gainsboro")
+
+    # Create plot
+    plt.figure()
+    plt.title('Validation curves')
+    plt.xlabel(param_name)
+    plt.ylabel('Score')
+    plt.tight_layout()
+    plt.legend(loc="best")
     return plt
