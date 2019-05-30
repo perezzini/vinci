@@ -1,84 +1,85 @@
-import pandas as pd
-from utils import datasets
-from nlp import retrieval
-from sklearn.utils import shuffle
+import numpy as np
+from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import cross_val_score
+from ml import model_evaluation
 
-def v_exp_split(dataframe,
-            test_size,
-            data_labels,
-            targets_label,
-            full_corpus,
-            text_rep_model,
-            dict,
-            sim_index,
-            exp_num,
-            preproc,
-            print_info=True):
-    # Split entire dataframe in training and validation sets
-    df_train, df_test = datasets.split(dataframe,
-                                    data_labels,
-                                    targets_label,
-                                    test_size,
-                                    stratify=True)
+def best_estimator(estimator,
+                    X_train,
+                    y_train,
+                    cv,
+                    param_grid,
+                    scoring='accuracy',
+                    n_jobs=-1,
+                    verbose=1):
+    """
+    Hyperparameters optimization: finds optimal hyperparameters combination
+    using CV
+    """
+    grid = GridSearchCV(estimator=estimator,
+                        param_grid=param_grid,
+                        scoring=scoring,
+                        n_jobs=n_jobs,
+                        cv=cv,
+                        verbose=verbose)
+    grid.fit(X_train, y_train)
 
-    num_train_rel = len(df_train[df_train['type'] == 1])
-    num_train_nrel = len(df_train[df_train['type'] == 0])
+    print('# Best estimator info optimized for', scoring, ':')
+    print("CV score (mean CV score of the best estimator): %0.3f (+/- %0.3f)" % (grid.best_score_, grid.cv_results_['std_test_score'][grid.best_index_] * 2))
+    print()
+    print('Best params (parameter setting that gave the best results on the hold-out data):',
+        grid.best_params_)
 
-    # Expand only relevant observations from training set
-    df_train_r_exp = retrieval.expand_dataset_with_sim_docs(df_train[df_train[targets_label] == 1][data_labels],
-                                                            full_corpus,
-                                                            sim_index,
-                                                            exp_num,
-                                                            text_rep_model,
-                                                            dict,
-                                                            preproc,
-                                                            'text',
-                                                            drop_duplicates=True)
-    df_train_r_exp[targets_label] = 1
+    return grid
 
-    # Expand only non relevant observations from training set
-    df_train_nr_exp = retrieval.expand_dataset_with_sim_docs(df_train[df_train[targets_label] == 0][data_labels],
-                                                            full_corpus,
-                                                            sim_index,
-                                                            exp_num,
-                                                            text_rep_model,
-                                                            dict,
-                                                            preproc,
-                                                            'text',
-                                                            drop_duplicates=True)
-    df_train_nr_exp[targets_label] = 0
+def plot_grid_search(cv_results,
+                    grid_param_1,
+                    grid_param_2,
+                    name_param_1,
+                    name_param_2):
+    # Get Test Scores Mean and std for each grid search
+    scores_mean = cv_results['mean_test_score']
+    scores_mean = np.array(scores_mean).reshape(len(grid_param_2),len(grid_param_1))
 
-    # Concatenate relevant and non relevant observations in final training set
-    df_train = pd.concat([df_train_r_exp, df_train_nr_exp])
-    len_df_train = len(df_train)
+    scores_sd = cv_results['std_test_score']
+    scores_sd = np.array(scores_sd).reshape(len(grid_param_2),len(grid_param_1))
 
-    # Delete all duplicates observations from training set: there
-    # could be equal observations with different targets
-    df_train.drop_duplicates(subset=['text'], keep='first', inplace=True)
-    len_df_train_dups_out = len(df_train)
+    # Plot Grid search scores
+    _, ax = plt.subplots(1,1)
 
-    # Verify and correct the case where test and training set are not disjoint
-    intersected_df = pd.merge(df_test, df_train, how='inner', on=['text'])
-    num_overlapped_test_train = len(intersected_df)
-    if num_overlapped_test_train >= 1:
-        # Drop rows from the training set
-        obs = [t for t in intersected_df['text']]
-        df_train = df_train[df_train['text'].map(lambda t: t not in obs)]
+    # Param1 is the X-axis, Param 2 is represented as a different curve (color line)
+    for idx, val in enumerate(grid_param_2):
+        ax.plot(grid_param_1, scores_mean[idx,:], '-o', label= name_param_2 + ': ' + str(val))
 
-    if print_info:
-        print('[Test set] Num of relevant observations:', len(df_test[df_test['type'] == 1]))
-        print('[Test set] Num of non relevant observations:', len(df_test[df_test['type'] == 0]))
-        print('\n')
-        print('[Train set] Num of relevant observations:', num_train_rel)
-        print('[Train set] Num of non relevant observations:', num_train_nrel)
-        print('\n')
-        print('[Expanded train set] Num of relevant observations:', len(df_train_r_exp))
-        print('[Expanded train set] Num of non relevant observations:', len(df_train_nr_exp))
-        print('\n')
-        print('[Expanded (non duplicates) train set] Num of relevant observations:', len(df_train[df_train['type'] == 1]))
-        print('[Expanded (non duplicates) train set] Num of non relevant observations:', len(df_train[df_train['type'] == 0]))
-        print('[Expanded (non duplicates) train set] Total num of observations', len(df_train))
-        print('\n')
-        print('Number of overlapped observations between test and expanded train set =', num_overlapped_test_train)
+    ax.set_title("Grid Search Scores", fontsize=20, fontweight='bold')
+    ax.set_xlabel(name_param_1, fontsize=16)
+    ax.set_ylabel('CV Average Score', fontsize=16)
+    ax.legend(loc="best", fontsize=15)
+    ax.grid('on')
 
-    return shuffle(df_test), shuffle(df_train)
+    return plt
+
+def nested_cv(estimator,
+            X,
+            y,
+            param_grid,
+            scoring='accuracy',
+            inner_cv=2,
+            outer_cv=5,
+            n_jobs=-1,
+            verbose=1):
+    """
+    Returns average cross-validation accuracy. This gives us a good estimate of what
+    to expect if we tune the hyperparameters of the estimator and then use it on unseen data.
+    """
+    grid = GridSearchCV(estimator=estimator,
+                        param_grid=param_grid,
+                        scoring=scoring,
+                        cv=inner_cv,
+                        verbose=verbose)
+    scores = cross_val_score(grid,
+                            X,
+                            y,
+                            scoring=scoring,
+                            cv=outer_cv)
+
+    return np.mean(scores), np.std(scores)
