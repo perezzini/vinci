@@ -30,5 +30,6 @@ joblib = "*"
 yellowbrick = "*"
 more-itertools = "*"
 seaborn = "*"
+"matplotlib2tikz" = "*"
 
 [dev-packages]
