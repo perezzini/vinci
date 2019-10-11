@@ -5,6 +5,7 @@ from sklearn.model_selection import validation_curve
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import roc_curve
 from sklearn.utils.multiclass import unique_labels
+from inspect import signature
 
 def tn(y_true, y_pred): return confusion_matrix(y_true, y_pred)[0, 0]
 
@@ -27,6 +28,11 @@ def fpr(y_true, y_pred):
     tn = tn(y_true, y_pred)
     return fp/(float(tn + fp))
 
+def tnr(y_true, y_pred):
+    fp = fp(y_true, y_pred)
+    tn = tn(y_true, y_pred)
+    return tn/(float(tn + fp))
+
 def tpr(y_true, y_pred):
     """
     AKA Recall or Sensitivity
@@ -42,7 +48,8 @@ def plot_learning_curves(estimator,
                         n_jobs=-1,
                         train_sizes=np.linspace(.1, 1.0, 5),
                         scoring='accuracy',
-                        verbose=1):
+                        verbose=1,
+                        plot_std=True):
     """
     Generate a simple plot of the test and training learning curve.
 
@@ -118,15 +125,15 @@ def plot_learning_curves(estimator,
     test_scores_std = np.std(test_scores, axis=1)
 
     plt.grid()
-    plt.fill_between(train_sizes, train_scores_mean - train_scores_std,
-                     train_scores_mean + train_scores_std, alpha=0.1,
-                     color="r")
-    plt.fill_between(train_sizes, test_scores_mean - test_scores_std,
-                     test_scores_mean + test_scores_std, alpha=0.1, color="g")
-    plt.plot(train_sizes, train_scores_mean, 'o-', color="r",
-             label="Training score")
-    plt.plot(train_sizes, test_scores_mean, 'o-', color="g",
-             label="Cross-validation score")
+
+    if plot_std:
+        # Draw bands
+        plt.fill_between(train_sizes, train_scores_mean - train_scores_std, train_scores_mean + train_scores_std, color="#DDDDDD")
+        plt.fill_between(train_sizes, test_scores_mean - test_scores_std, test_scores_mean + test_scores_std, color="#DDDDDD")
+
+    # Draw lines
+    plt.plot(train_sizes, train_scores_mean, '--', color="#111111",  label="Training score")
+    plt.plot(train_sizes, test_scores_mean, color="#111111", label="Cross-validation score")
     plt.legend(loc="best")
     return plt
 
@@ -200,7 +207,8 @@ def plot_val_curves(estimator,
                     scoring=None,
                     ylim=(0.0, 1.1),
                     n_jobs=-1,
-                    verbose=0):
+                    verbose=0,
+                    plot_std=True):
     train_scores, test_scores = validation_curve(estimator=estimator,
                                                 X=X,
                                                 y=y,
@@ -221,16 +229,19 @@ def plot_val_curves(estimator,
     plt.ylabel(ylabel)
     plt.ylim(0.0, 1.1)
     lw = 2
+
+    if plot_std:
+        plt.fill_between(param_range, train_scores_mean - train_scores_std,
+                         train_scores_mean + train_scores_std, alpha=0.2,
+                         color="darkorange", lw=lw)
+        plt.fill_between(param_range, test_scores_mean - test_scores_std,
+                         test_scores_mean + test_scores_std, alpha=0.2,
+                         color="navy", lw=lw)
+
     plt.semilogx(param_range, train_scores_mean, label="Training score",
                  color="darkorange", lw=lw)
-    plt.fill_between(param_range, train_scores_mean - train_scores_std,
-                     train_scores_mean + train_scores_std, alpha=0.2,
-                     color="darkorange", lw=lw)
     plt.semilogx(param_range, test_scores_mean, label="Cross-validation score",
                  color="navy", lw=lw)
-    plt.fill_between(param_range, test_scores_mean - test_scores_std,
-                     test_scores_mean + test_scores_std, alpha=0.2,
-                     color="navy", lw=lw)
     plt.legend(loc="best")
     return plt
 
@@ -255,30 +266,54 @@ def eval_threshold(threshold,
                     y_true,
                     y_score):
     fpr, tpr, thresholds = roc_curve(y_true, y_score)
-    print('Sensitivity:', tpr[thresholds > threshold][-1])
-    print('Specificity:', 1 - fpr[thresholds > threshold][-1])
+    print('Sensitivity (REC):', tpr[thresholds > threshold][-1])
+    print('Specificity:', tnr[thresholds > threshold][-1])
 
 def plot_precision_recall_vs_threshold(precisions,
                                     recalls,
                                     thresholds,
-                                    actual_threshold=None):
+                                    actual_threshold=0):
     plt.figure()
     plt.plot(thresholds, precisions[:-1], "b--", label="Precision")
     plt.plot(thresholds, recalls[:-1], "g-", label="Recall")
     plt.xlabel("Discrimination threshold")
-    plt.legend(loc="center left")
+    plt.legend(loc="lower left")
     plt.ylim([0, 1.05])
-    if actual_threshold:
-        plt.axvline(x=actual_threshold)
+    plt.vlines(x=actual_threshold, ymin=0, ymax=1, linestyles='--')
     return plt
 
-def plot_precision_recall_curve(precisions, recalls):
+def plot_precision_recall_curve(precisions, recalls, thresholds, t=0, fill_area=True):
     plt.figure()
-    plt.plot(recalls, precisions)
-    plt.xlabel("Recall")
-    plt.ylabel("Precison")
-    plt.ylim([0.0, 1.05])
-    plt.xlim([0.0, 1.05])
+    # In matplotlib < 1.5, plt.fill_between does not have a 'step' argument
+    # step_kwargs = ({'step': 'post'}
+    #                if 'step' in signature(plt.fill_between).parameters
+    #                else {})
+    plt.step(recalls, precisions, color='b', where='post')
+    # plt.plot(recalls, precisions, color='b')
+    if fill_area:
+        plt.fill_between(recalls, precisions, alpha=0.2, color='b')
+
+    plt.xlabel('Recall')
+    plt.ylabel('Precision')
+    plt.ylim([0.0, 1.08])
+    plt.xlim([0.0, 1.0])
+    plt.title('Precision-Recall curve')
+
+    # plot the current threshold on the line
+    close_default_clf = np.argmin(np.abs(thresholds - t))
+    # plt.scatter(recalls[close_default_clf],
+    #             precisions[close_default_clf],
+    #             marker='o')
+    # plt.annotate(t, (recalls[close_default_clf], precisions[close_default_clf]))
+    plt.plot(recalls[close_default_clf], precisions[close_default_clf], 'o', c='k',
+            markersize=5)
+    plt.text(recalls[close_default_clf]+.02, precisions[close_default_clf]+.02, t)
+    # plt.text(recalls[close_default_clf],
+    #         precisions[close_default_clf],
+    #         t,
+    #         horizontalalignment='center',
+    #         verticalalignment='center',
+    #         transform=plt.transAxes)
     return plt
 
 def plot_validation_curves(estimator,
@@ -326,3 +361,24 @@ def plot_validation_curves(estimator,
     plt.tight_layout()
     plt.legend(loc="best")
     return plt
+
+def adjusted_classes(y_scores, t):
+    """
+    This function adjusts class predictions based on the prediction threshold (t).
+    Will only work for binary classification problems.
+    """
+    return [1 if y >= t else 0 for y in y_scores]
+
+def precision_recall_threshold(precisions, recalls, thresholds, y_scores, y_test, t=0.5, fill_area=True):
+    """
+    plots the precision recall curve and shows the current value for each
+    by identifying the classifier's threshold (t).
+    """
+
+    # generate new class predictions based on the adjusted_classes
+    # function above and view the resulting confusion matrix.
+    y_pred_adj = adjusted_classes(y_scores, t)
+    print(confusion_matrix(y_test, y_pred_adj))
+
+    # plot the curve
+    plot_precision_recall_curve(precisions, recalls, thresholds, t, fill_area=fill_area)

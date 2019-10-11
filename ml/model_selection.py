@@ -23,11 +23,15 @@ def best_estimator(estimator,
                         verbose=verbose)
     grid.fit(X_train, y_train)
 
-    print('# Best estimator info optimized for', scoring, ':')
-    print("CV score (mean CV score of the best estimator): %0.3f (+/- %0.3f)" % (grid.best_score_, grid.cv_results_['std_test_score'][grid.best_index_] * 2))
+    print('# Best estimator stats optimized for', scoring, ':')
     print()
-    print('Best params (parameter setting that gave the best results on the hold-out data):',
-        grid.best_params_)
+    print('Best index:', grid.best_index_)
+    print()
+    print('CV scores for each search done:', grid.cv_results_['mean_test_score'])
+    print()
+    print("CV score for the best estimator found: %0.5f (std %0.5f)" % (grid.best_score_, grid.cv_results_['std_test_score'][grid.best_index_]))
+    print()
+    print('Best params found:', grid.best_params_)
 
     return grid
 
