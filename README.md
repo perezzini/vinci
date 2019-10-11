@@ -40,7 +40,7 @@ BO_MUNICIPAL=http://sanlorenzo.gob.ar/ordenanzas
 
 ```
 
-## Install project's requirement
+## Install project's requirements
 ```
 pipenv install
 ```
