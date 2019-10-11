@@ -39,3 +39,10 @@ BO_PROVINCIAL=https://www.santafe.gob.ar/boletinoficial
 BO_MUNICIPAL=http://sanlorenzo.gob.ar/ordenanzas
 
 ```
+
+## Install project's requirement
+```
+pipenv install
+```
+
+Python version 3.5.6
