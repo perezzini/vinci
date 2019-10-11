@@ -1,9 +1,11 @@
 # vinci: *Legal Requirements Engineering*
-Computer Science thesis development
+Computer Science practice thesis development
 
-## Some important requirements
+## Important software used
 - Docker
 - Splash package: a Javascript rendering service. Used to render dynamic websites.
+- MongoDB
+- Pipvenv
 
 ## Crawler
-Implemented some spiders to crawl certain *legal* websites from the Argentinian Gov.
+Implemented some spiders to crawl certain websites containing legal documents from the Argentinian Gov. Must be runned under some time-based job scheduler like Cron.
