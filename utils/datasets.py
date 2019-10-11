@@ -22,3 +22,12 @@ def split(dataframe,
     df_test = pd.concat([pd.DataFrame(X_test), pd.DataFrame(y_test)], axis=1)
 
     return df_train, df_test
+
+def load_and_sample(n,
+                    file_path,
+                    usecols=None):
+    df = pd.read_csv(file_path, usecols=usecols)
+    if n >= len(df):
+        return df
+    else:
+        return df.sample(n=n)
