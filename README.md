@@ -46,3 +46,9 @@ pipenv install
 ```
 
 Python version 3.5.6
+
+## Classifiers
+Download 4 text classifiers (Derecho Ambiental -> Desechos peligrosos and Derecho Laboral -> Accidentes de trabajo) from this 
+[link](https://www.dropbox.com/s/4c15ogj55v0xvit/text-classifiers.zip?dl=0).
+
+- Note: refer to `test` folder for further instructions.
