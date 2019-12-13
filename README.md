@@ -1,5 +1,9 @@
 # vinci: *Legal Requirements Engineering*
-Computer Science practice thesis development
+Computer science project thesis development.
+
+**Abstract**: *Within the legal engineering, artificial agents are needed with the ability to extract knowledge and patterns within legal documents to create applications that assist professionals to perform certain tasks, many of which need to be executed in real time, recovering and analyzing regulations of the official bulletins. Currently, the search for relevant regulations for certain activities within a company is done manually and involves numerous professionals from different areas within it. In the industrial field, the previous task is known as legal matrix. This work proposes an online support system for legal engineering in order to transform legal matrix into a semi-automatic activity.*
+
+Luciano Perezzini, Universidad Nacional de Rosario
 
 ## Important software used
 - Docker
@@ -7,8 +11,8 @@ Computer Science practice thesis development
 - MongoDB
 - Pipvenv
 
-## Crawler
-Implemented some spiders to crawl certain websites containing legal documents from the Argentinian Gov. Must be runned under some time-based job scheduler like Cron.
+## Crawlers
+Implemented multiple spiders to crawl websites containing legal documents from the Argentinian Gov. Must be runned under some time-based job scheduler like Cron.
 
 ## Local environment
 Set the following paths in a .env file:
@@ -45,10 +49,13 @@ BO_MUNICIPAL=http://sanlorenzo.gob.ar/ordenanzas
 pipenv install
 ```
 
-Python version 3.5.6
+Python version `3.5.6`
 
 ## Classifiers
-Download 4 text classifiers (Derecho Ambiental -> Desechos peligrosos and Derecho Laboral -> Accidentes de trabajo) from this 
-[link](https://www.dropbox.com/s/4c15ogj55v0xvit/text-classifiers.zip?dl=0).
+Four text classifiers (*Derecho Ambiental -> Desechos peligrosos* and *Derecho Laboral -> Accidentes de trabajo*) were trained and are available from this [link](https://www.dropbox.com/s/4c15ogj55v0xvit/text-classifiers.zip?dl=0).
 
 - Note: refer to `test` folder for further instructions.
+
+---
+
+> *"It had long since come to my attention that people of accomplishment rarely sat back and let things happen to them. They went out and happened to things."*
