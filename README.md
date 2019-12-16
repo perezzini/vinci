@@ -1,9 +1,11 @@
 # vinci: *Legal Requirements Engineering*
 Computer science project thesis development.
 
-**Abstract**: *Within legal engineering, artificial agents are needed with the ability to extract knowledge and patterns within legal documents to create applications that assist professionals to perform certain tasks, many of which need to be executed in real time, recovering and analyzing regulations of the official bulletins. Currently, the search for relevant regulations for certain activities within a company is done manually and involves numerous professionals from different areas within it. In the industrial field, the previous task is known as legal matrix. This work proposes an online support system for legal engineering in order to transform legal matrix into a semi-automatic activity.*
+**Abstract**: *Within legal engineering, artificial agents are needed with the ability to extract knowledge and patterns within legal documents to create applications that assist professionals to perform certain tasks, many of which need to be executed in real time, recovering and analyzing regulations of the official bulletins. Currently, the search for relevant regulations for certain activities within a company is done manually and involves numerous professionals from different areas within it. In the industrial field, the previous task is known as legal requirements engineering. This work proposes an online support system for legal engineering in order to transform legal requirements engineering into a semi-automatic activity.*
 
 Luciano Perezzini, Universidad Nacional de Rosario
+
+2018 - 2019
 
 ## Important software used
 - Docker
