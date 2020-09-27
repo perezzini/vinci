@@ -119,3 +119,6 @@ SOFT-NOTES.md
 
 # Tests
 tests/
+
+# Vscode
+.vscode/
